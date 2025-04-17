@@ -1,0 +1,35 @@
+[
+  {
+    "user": "We are building a digital health monitoring platform for patients with chronic illnesses."
+  },
+  {
+    "assistant": "Thank you! What type of data are you collecting?"
+  },
+  {
+    "user": "We're collecting vital signs like heart rate, glucose levels, and patient-reported outcomes."
+  },
+  {
+    "assistant": "Is this data shared externally or used only internally?"
+  },
+  {
+    "user": "We share some data with the patient's primary care provider and a third-party analytics company."
+  },
+  {
+    "assistant": "Are there any regulatory compliance requirements you're subject to?"
+  },
+  {
+    "user": "Yes, we must comply with HIPAA in the U.S., and we’re expanding to Europe, so GDPR applies as well."
+  },
+  {
+    "assistant": "Where does the data processing occur — on device, in the cloud, or elsewhere?"
+  },
+  {
+    "user": "Some initial processing is done on the device, but most analytics are performed in the cloud."
+  },
+  {
+    "assistant": "Is this data used for real-time decision-making, or just for periodic reports?"
+  },
+  {
+    "user": "Both. We alert doctors in real-time if something is wrong, but we also generate weekly trend reports."
+  }
+]

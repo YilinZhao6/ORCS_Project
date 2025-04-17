@@ -1,0 +1,4873 @@
+From last time: Compliance isn’t enough
+Examples from the discussion board
+• Monitoring employees in the workplace (e.g., Amazon, Walmart)
+• Training AI models on user data – (users agreed in terms of service, or
+changed terms of service without notifying)
+• Google’s gap between what users expected and what they agreed to
+(overly complex design exploited ambiguities and misunderstandings)
+• Ring sharing doorbell footage w/police w/o user consent
+• Medical marketing companies: can’t target to diabetes patients, but
+can target patients using lifestyle psychographics that correlate
+strongly with diabetes.
+• Study of mobile health apps found GDPR compliant apps still had data
+vulnerabilities because GDPR was overly broad without detailed
+guidance.
+Let’s start with compliance and see what
+goes wrong…
+Legal definition of PII (from U.S. Dept of Labor)
+• Any representation of information that permits the identity of an
+individual to whom the information applies to be reasonably inferred
+by either direct or indirect means.
+• Further, PII is defined as information: (i) that directly identifies an
+individual (e.g., name, address, social security number or other
+identifying number or code, telephone number, email address, etc.)
+or (ii) by which an agency intends to identify specific individuals in
+conjunction with other data elements, i.e., indirect identification.
+(These data elements may include a combination of gender, race,
+birth date, geographic indicator, and other descriptors).
+Legal definition of PII (from U.S. DHS)
+• Any information that permits the identity of an individual to be
+directly or indirectly inferred, including any information that is linked
+or linkable to that individual, regardless of whether the individual is a
+U.S. citizen, lawful permanent resident, visitor to the U.S., or
+employee or contractor to the Department.
+• PII includes but is not limited to includes Social Security Numbers,
+driver’s license numbers, Alien Registration numbers, financial or
+medical records, biometrics, or a criminal history.
+Legal definition of PII (from GDPR, Article 4)
+• ‘Personal data’ means any information relating to an identified or
+identifiable natural person (‘data subject’); an identifiable natural
+person is one who can be identified, directly or indirectly, in
+particular by reference to an identifier such as a name, an
+identification number, location data, an online identifier or to one or
+more factors specific to the physical, physiological, genetic, mental,
+economic, cultural or social identity of that natural person.
+Lots more definitions, all follow the same structure:
+• PII permits the identity of an individual to be inferred through direct
+or indirect means.
+• Long list of things that are definitely PII or may be PII
+Direct means + definitely PII
+full name
+date of birth
+street address
+email address
+biometric data
+Driver’s License
+SSN
+credit card number
+IP address
+…
+Indirect means + maybe PII
+first initial and last name
+gender
+zip code
+birth year
+height and weight
+geographic indicators
+demographics
+Why??
+Partial name
+Think like an adversary
+• In 1997, the Massachusetts Group Insurance Commission released
+“anonymized” medical data on hospital visits of all state employees
+Find a partner nearby, introduce yourselves, and discuss (5 min):
+What could you do with these data? (both good and bad)
+Think like an adversary
+• In 1997, the Massachusetts Group Insurance Commission released
+“anonymized” medical data on hospital visits of all state employees
+• Linkage attack: join anonymized hospital discharge data released by
+Massachusetts GIC with public voter list
+14
+What is anonymity?
+• Problem: 87% of people in the US are uniquely identified by the 3
+quasi-identifiers DOB, gender, zip [Sweeney ‘00]
+• How to determine which combination of quasi-identifiers constitute
+PII?
+• Idea: remove/modify/suppress some of the identifiers, while keeping
+the sensitive data
+Problem: Assumes we can partition data
+into “identifying” and “non-identifying”
+Idea 1: k-anonymity
+• Make sure enough people have “the same” data as you, that the
+remaining identifiers are not collectively identifying
+• A database is k-anonymous if every quasi-identifier equivalence class
+has ≥k entries [Sweeney ‘02]
+• “Equivalence class” is the collection of people who have the same collection
+of remaining identifiers as you
+• You are information theoretically indistinguishable from k-1 other people
+• Achieved by suppressing/removing some of the data
+A 2-anonymous database
+Any problems with this?
+Idea 2: ℓ-diversity
+• For every group of people sharing the
+same identifiers, make sure they have
+different “private” attributes
+• A database is ℓ-diverse if for every quasi-
+identifier equivalence class each sensitive
+attribute is ≤1/ℓ of its entries [MKGV ‘06]
+• Even knowing your public attributes, don’t
+know your secret information
+For what ℓ is this ℓ-diverse?
+6-anonymous and 2-diverse
+Alternative interpretations of ℓ-
+diversity:
+• How much weight does one
+sensitive attribute (=health
+problem) carry in the
+equivalence class?
+• No equivalence class has a
+health problem that is shared by
+more than 1/ℓ of the people.
+• 1/ℓ people in the equivalence
+class have the same health
+problem
+6-anonymous and 2-diverse 6-anonymous and 1.5-diverse
+Flu
+Another problem…
+• It’s not always possible to satisfy k-anonymity and ℓ-diversity.
+• Potential privacy/information leaks from whether it can be
+anonymized
+• Activity (5-10 min): With a partner, work together to create a
+database that cannot be made k-anonymous and ℓ-diverse, while
+retaining the relevant content of the data
+• Hint: Think about what properties a database could have that make it hard to
+satisfy ℓ-diversity.
+k-anonymity + l-diversity attacks
+• “I heard Bill went to the hospital for the flu…”
+• Response from k-anon/l-div advocates: can’t protect privacy if
+adversary knows sensitive attributes
+• Response to that: Knowing auxiliary information doesn’t allow the
+hospital to leak Bill’s HIV status
+k-anonymity + l-diversity attacks
+• “I know Bill is a white male…”
+• Response from k-anon/l-div advocates: can’t protect privacy if
+adversary knows middle school science?
+Takeaway: k-anonymity and l-diversity are not useful solutions
+Removing all identifiers doesn’t work either
+• Doesn’t solve privacy problem: Netflix Challenge linkage attack [NS ’07]
+• More on this next time…
+Today’s homework:
+On CourseWorks:
+1. 2. 4. Questions about k-anonymity and l-diversity
+Muddiest point (What is still confusing to you after today’s lecture?)
+3. Readings about Netflix challenge
+Optional “beyond the scope” reading: Simple Demographics Often
+Identify People Uniquely, by Latanya Sweeney, 2000.
+https://dataprivacylab.org/projects/identifiability/paper1.pdf
+• This paper gives more detail on re-identification via quasi-identifiers, and is the
+paper that showed 87% of Americans are uniquely identified by {DOB, gender, zip
+code}.
+Questions?
+Anonymization:
+Linkage Attacks
+
+Jan. 29, 2025
+Agenda:
+1. Formalizing database
+properties
+2. Algorithm for linkage
+attack
+3. Implementation on
+Netflix dataset
+
+• Courseworks post about how to catch up if you registered late
+Muddiest point on k-anon and l-div
+1. What to do when it’s impossible to satisfy? What are good values of
+k and l? And how to do these in practice?
+Because these methods can be impossible to achieve and they
+can be attacked (we will see more examples of attacks), they are not
+recommended for use in practice. There’s no way to know if a given k
+or l is “good enough”
+2. How much information to hide? How to compute l for a given
+dataset? Can we see more examples?
+I posted a ~15 min (optional) video about this.
+From last time..
+• Removing all identifiers doesn’t solve privacy problem: Netflix Challenge
+linkage attack [NS ’07]
+Netflix Challenge
+• In 2006, Netflix published “anonymized” version of 500,000 users’
+movie ratings (roughly 1/8 of their users) from 1999 to 2005.
+• Goal was improve recommendation engine. Technical name is
+collaborative filtering: “If you liked X, you might like Y”
+• Teams that improved upon Netflix’s engine would win a $1M prize
+• Discuss with your neighbor (2 min): Would you think anything is
+wrong with this, if you hadn’t done the reading?
+• Researchers reidentified users in the database by a linkage attack, by
+linking users to the publicly available IMDb database of movie
+rankings
+Linkage attack
+• A linkage attack is a method for re-identifying anonymized datasets
+• Combine the anonymized dataset with other publicly available data
+(e.g., hospital visit data with voter records)
+• We’ll see an example today, and we’ll also understand why this
+generalizes to suggest linkage attacks are possible in general on
+anonymized datasets
+Back to Netflix: no quasi-identifiers
+• Last time we talked about what quasi-identifier to remove/keep
+• Netflix dataset had no quasi-identifiers
+• For each user it only contained the movies she rated:
+• name of movie
+• rating (out of 5 stars) of movie
+• date rated
+IMDb has these + direct identifiers
+Netflix dataset has:
+• name of movie
+• rating (out of 5 stars) of movie
+• date rated
+Users did not expect this to public,
+so rated all movies they watched,
+including sensitive ones
+IMDb has:
+• name of movie
+• rating (out of 5 stars) of movie
+• date rated
+• Name, username, or other PII
+This is a public database, so users
+rated only movies they wanted it
+to be known they watched
+E.g., “Brokeback mountain effect” from the reading
+Discuss with your neighbor (3 min): How could this information be used to re-identify people?
+Linkage attack plan
+1. 2. 3. 4. Take a Netflix “anonymized” user record
+Find IMDb user record that matches the user record
+Assume they are from the same person
+Make inferences and/or find out their identity using IMDb personal
+info
+What do we need to be careful of here?
+How identifying are IMDb identifiers?
+Netflix database
+m
+• Database D = Row is a specific person’s data (e.g., viewing history)
+n
+Column is an attribute (e.g., rating of a specific movie)
+Netflix data: highly sparse
+• Sparse datasets are mostly null
+• What fraction of Netflix have you watched? What fraction of the items on
+Amazon have you purchased?
+• Your ratings for the stuff you haven’t watched/bought are null bc there’s no
+data
+• Null entries are denoted ⊥ to distinguish them from data with
+content, referred to as non-null
+• The support of a row r is the set of non-null attributes, denoted
+supp(r).
+# ppl who
+watched it
+Netflix data: long-tailed
+• In the pdf showing how many people watched each movie, the tail of
+the distribution holds a lot of probability mass
+movie
+• “Most items are unpopular”
+• “…power law distributions tend to
+arise in social systems where many
+people express their preferences
+among many options” –Clay Shirky
+(NYU)
+• Anonymizing by removing unpopular
+items (e.g., k-anonymity) will fail to
+retain useful properties of the data
+for collaborative filtering
+How unique are people?
+• We know most people rated only a small fraction of movies, and that
+most movies were watched by only a few people.
+• Did anyone else watch the same movies as you?
+• Sim(r1,r2) measures how similar two users are:
+• e.g., Sim(r1,r2)= fraction of movies that they gave the same rating in the same
+week
+• High similarity with others means that many other people are like you;
+small similarity means you are unique (and can be identified)
+How unique are people?
+• Plot shows likelihood of being “at least as
+x-similar” to someone else in the Netflix
+dataset
+• The probability of being “very similar” to
+someone else in the database is very small,
+so even a few pieces of information can
+uniquely identify most people
+Dataset properties recap
+The properties that make datasets vulnerable to re-identification
+attacks are: (1) sparsity, (2) long-tails, and (3) uniqueness of users
+• On Courseworks, complete the In-class activity (quiz) for today
+Modeling the adversary
+Goal: de-anonymize an anonymous record r from the published database
+1. 2. Sample “anonymized” r from D
+Give auxiliary information related to r to the adversary
+• a subset of the values of r’s attributes
+• may be imprecise, perturbed, or incorrect
+• modeled as an arbitrary (randomized) function Aux(r)
+3. Given anonymized record r and auxiliary information, adversary tries
+to reconstruct the entire record r.
+De-anonymization
+Def: A database D can be (𝜃, 𝜔)-deanonymized w.r.t. Aux if ∃ an
+algorithm A with A(D, r, Aux(r)) = r’ s.t.,
+• Given the database and the auxiliary information, predict all the
+(anonymized) attributes of r
+• e.g., identifying the MA Governor’s medical record
+• Must do this nearly all of the rows
+• Captures large-scale de-anonymization
+• “Doesn’t have to the same record, just someone who is very like you”
+Can be just as disclosive
+De-anonymization (extension)
+• Sometimes only a subset of the true database is published (as in
+Netflix case, where ~1/8 of data were released)
+• Then instead want:
+1. 2. if r in the sample, produce similar record r’
+if r is not in the sample, recognize that there’s nothing like r
+(i.e., output ⊥)
+De-anonymization algorithm
+• Inputs: a sample ෡
+𝐷 of database D, record r D, auxiliary information aux
+about r
+• Output: a record 𝑟′ ∈෡
+𝐷 or ⊥
+• Scoring function Score assigns a numerical score to each record in ෡
+𝐷
+based on how well it matches aux.
+• Matching criterion is how the scores are used to determine if there is a
+match in ෡
+𝐷
+• Record selection selects one “best-guess” record in ෡
+𝐷
+De-anonymization algorithm
+1. Adversary computes for each 𝑟′ ∈෡
+𝐷
+2. i.e., score is based on least similar attribute to aux
+Adversary computes matching set D’ (for some fixed value 𝛼):
+3. If matching set is empty, output ⊥
+4. Otherwise, output 𝑟′ ∈෡
+𝐷 with highest score
+Back to Netflix (again)
+• Dataset had ~100M ratings from ~500K users
+• Flexibility in Sim gives robustness in case of errors/noise/slack
+• Rating attributes on 1-5 star scale. Considered thresholds of 0 (i.e., exact
+match) and 1 (i.e., can differ by one star rating)
+• Date attributes, considered thresholds of 3, 14, ∞ (i.e., attacker not given
+dates)
+• Allowed some attributes in aux to be completely wrong: If aux contains k
+attributes, only need k’<k of them to be correct
+Results of de-anonymization
+• Very little auxiliary information is needed!!
+• With 8 movie ratings (where 2 may be completely wrong) and dates
+with a 14-day error, 99% of records are unique
+• For 68% of records, two ratings and dates (with a 3-day error) are
+sufficient.
+• Even without any dates, 84% of subscribers can be uniquely identified
+if the adversary knows 6 out of 8 moves rated are outside the top 500
+• Using long-tailed property
+Is this a problem?
+• From the Netflix Prize FAQ webpage: “Is there any customer
+information in the dataset that should be kept private?”
+• “No, all customer identifying information has been removed; all that
+remains are ratings and dates. This follows our privacy policy, which
+you can review here. Even if, for example, you knew all your own
+ratings and their dates you probably couldn’t identify them reliably in
+the data because only a small sample was included (less than one-
+tenth of our complete dataset) and that data was subject to
+perturbation. Of course, since you know all your own ratings that
+really isn’t a privacy problem is it?”
+Is this a problem?
+• Small scale re-identification using IMDb data. Matched a user that
+was 28 standard deviations away from the second-best candidate.
+• Things that can be learned about this person from their private Netflix
+data that are not available from their public IMDb data:
+Discuss with your neighbor (3 min): Why do you think Netflix did not
+foresee these privacy problems?
+The problems with anonymization
+1. 2. Removing identifiers or quasi-identifiers is not enough (this dataset
+had none)
+The approach of “think of everything that could be used to re-
+identify” isn’t good enough.
+• The adversaries are probably more clever than you are. You have to prevent
+EVERY attack; they only have to find one that works.
+• This doesn’t account for future data releases that you can’t currently predict.
+Roadmap: One more lecture on why anonymization doesn’t work, then
+move on to things that DO work.
+Today’s homework
+On CourseWorks:
+1. Short-answer reflections on why Netflix didn’t foresee these privacy
+problems, and what they could have done differently.
+2. Discussion post: What other datasets are you worried about after today?
+3. Readings about attack from next lecture
+4. Optional: Linear programming review
+5. Optional reading: Robust Anonymization of Large Datasets (How To Break
+Anonymity of the Netflix Prize Dataset), by Arvind Narayanan and Vitaly
+Shmatikov, 2006. https://arxiv.org/abs/cs/0610105
+• This paper gives more detail on the linkage attack we saw today. The content of this
+lecture was taken from this paper.
+Homework assignment 1
+• Homework assignment 1 (part 1) is due Tuesday Feb 4 at 11:59pm
+• Focuses on the AOL search logs release
+• This is a longer assignment so make sure to start early!
+• Wednesday we’ll discuss in class. Come prepared!
+• There will also be a part 2 afterwards…
+Questions?
+Anonymization:
+Reconstruction Attacks
+Policy for Privacy Technologies – ORCS 4201
+Prof. Rachel Cummings – Feb. 3, 2025
+Slide Credit: Aloni Cohen
+Agenda:
+1. Reconstruction attacks
+in theory
+2. Implementation on
+real-world dataset
+Anonymization doesn’t work…
+• If you remove all the PII because combinations of quasi-identifiers can
+identify individuals (e.g., Massachusetts health data)
+• If you remove all the quasi-identifiers too because people may be unique
+in the dataset, and can be identified using other datasets via linkage
+attack (e.g., Netflix)
+• What if you don’t allow analysts direct access to the data, but instead
+through a protected system that dis-allows “bad queries” (e.g., to perform
+the linkage attack we saw last time)?
+Today we’ll see how to:
+• … apply a reconstruction algorithm of [DworkMcSherryTalwar07]
+• … to a real system (Aircloak, from the reading)
+• … on real data
+• … and achieve perfect accuracy (i.e., learn everyone’s data)
+Linear Program Reconstruction in Practice, by Aloni Cohen and Kobbi Nissim
+Reconstruction from Linear Statistics
+Reconstruction from Linear/Counting Queries
+→
+𝑞 ∈ {0,1}𝑛
+Known Secret
+𝐼𝐷1
+𝐼𝐷2
+…
+𝑠1𝑠2
+…𝑠𝑛
+𝐼𝐷𝑛
+Disclosure Control System 𝑎 = ⟨→
+𝑞,
+→
+𝑠 ⟩ + 𝑒
+Many queries: →
+𝑎 = 𝑄→
+𝑠 + →
+𝑒
+Generic reconstruction approach:
+′
+→
+→
+- Find consistent with and error
+𝑠
+Q,
+𝑎
+distribution.
+Linear Programs
+∈ {0,1}𝑛 →
+and prove something about how close
+𝑠
+Reconstruction from Linear/Counting Queries
+• Given: , 𝑄 →
+𝑎 = 𝑄→
+𝑠 + →
+→
+𝑒
+, and some knowledge of the distribution of errors (e.g.,
+𝑒
+bounded, Gaussian, sparse … )
+′
+• Goal: Find a plausible database →
+is to .
+𝑠
+→
+𝑠
+• How to find a plausible
+→
+𝒔 ′
+• Solve a constraint satisfaction problem (CSP)
+′
+′
+→
+• E.g., Find such that (assuming max error )
+𝑠
+∈ {0,1}𝑛 | →
+𝑎 − 𝑄→
+𝑠
+| ≤ 𝐸 𝐸
+• Problem: CSPs are hard to solve in the worst case
+• Solve a relaxed problem:
+′
+→
+• Find such that 𝒛 ∈ [𝟎, 𝟏]𝒏 →
+𝑎 − 𝑄→
+𝑠
+′
+≤ 𝐸 →
+, then round [Dinur-Nissim 2003]
+𝑠
+= 𝑟𝑜𝑢𝑛𝑑(→
+𝑧 )
+• If we know that most errors are small (e.g., Gaussian errors), be more clever
+′
+→
+• Find minimizing errors 𝑧
+→
+𝑎 − 𝑄→
+𝑠
+then round. [Dwork-McSherry-Talwar 2007]
+′
+Linear Programming review
+• Given: , , and
+𝑓 ∈ ℝ𝑛 𝐶 ∈ ℝ𝑚×𝑛 𝑦 ∈ ℝ𝑚
+• Variables:
+𝑥 ∈ [0,1]𝑛
+• Linear Program: linear objective function and linear inequality constraints
+• Minimize:
+𝑓𝑇 𝑥
+• Subject to:
+𝐶𝑥 ≤ 𝑦
+• Linear programs easy to solve in practice, poly-time in theory (e.g., ones in this paper
+took ~4 seconds on a laptop)
+• Integer programs: 𝑥 ∈ {0,1}𝑛
+; NP-hard, but sometimes solvers and heuristics are okay
+• LPs for reconstruction (next slides)
+→
+• Dwork-McSherry-Talwar: Find minimizing -error
+𝑧 ∈ [0,1]𝑛 ℓ1
+′
+→
+• Dinur-Nissim: Find such that
+𝑧 ∈ [0,1]𝑛 →
+𝑎 − 𝑄→
+𝑠
+≤ 𝐸
+Dinur-Nissim ’03 reconstruction attack
+• Attack target dataset x (later called s) of size n
+• Database entries indexed by a set of unique identifiers I.
+• Each entry has a Boolean target attribute, xi.
+• Each query q ⊆ [n] specifies a subset of entries
+• Response aq = q(x) + eq is the sum of true value q(x) = ∑
+𝑖∈𝑞
+𝑥𝑖
+plus an error term eq.
+• Errors sampled from a zero-mean Gaussian with S.D. σ, then rounded to the
+nearest integer.
+• Each query q is a uniformly random subset of [n].
+• Set of all queries is Q, and is of size m.
+Dinur-Nissim ‘03
+• Thm (informal): For a database of size n, if noise magnitude is ,
+𝜎 = 𝑜(𝑛)
+then there exists a simple LP that reconstructs all but a small fraction of x.
+• Solve this LP and round xi to Booleans
+Rewrite error bound: E = Bσ,
+where B is the error bound
+multiplier and σ is the
+standard deviation of the
+Gaussian errors.
+Dwork-McSherry-Talwar ‘07
+• The LP of [DN03] is best with a bound on the maximum error.
+• [DMT07] is best when some errors may be very significant, but typical errors
+are small (e.g., Gaussian noise).
+• Goal is to minimize total error across all queries
+• Solve this LP and round xi to Booleans
+This was the attack used in
+[CN18] that we’ll see today
+Comparing the two
+Dinur-Nissim ‘03 Dwork-McSherry-Talwar ‘07
+DiNi vs DMT LP for Gaussian noise
+DiNi LP
+DMT LP
+•
+•
+∀𝑞, 𝑒′
+𝑞 ≤ 𝐸 = 𝐵𝜎
+∀𝑠′
+𝑖, 0 ≤ 𝑠′
+𝑖 ≤ 1
+Min:
+•
+∑
+𝑞
+𝑒′
+𝑞
+•
+∀𝑠′
+𝑖, 0 ≤ 𝑠′
+𝑖 ≤ 1
+Guess on PollEverywhere: make sure to include your name!!
+• How do DiNi and DMT compare? Which would be better?
+• How does DiNi’s accuracy change with B?
+• PollEv.com/rachelcummings333
+• Text rachelcummings333 and your message to 22333
+Carrying it out in practice
+Pick a target
+Make linear queries with nice enough error
+Reconstruct
+“The goal of Diffix is to allow data analysts to perform an unlimited
+number of statistical queries on a sensitive database while protecting
+the underlying data and while introducing only minimal error.”
+Advertised as an off-the-shelf, GDPR-compliant privacy solution.
+Diffix goals: Expressiveness, Utility, & Privacy
+• Support as much of SQL as possible.
+• Add as little noise as possible.
+• Provide out-of-the-box GDPR compliance.
+Diffix system
+• SQL interface that sits between a data analyst and a dataset
+• Analyst issues counting queries (from a restricted subset of SQL)
+• Diffix executes a related query (modified for privacy) on the dataset,
+add some noise to the result, and noisy answer is returned to the
+analyst.
+• For those wondering: the noise added does not correspond to
+differential privacy!
+Diffix privacy
+Does this ring
+any bells??
+• Primary focus of Diffix’s design is noise generation
+• Mean-zero normally distributed noise, with standard deviation 𝜎
+that depends
+on the query, rounded to the nearest integer.
+• Each additional condition in the query introduces an additional layer noise of
+standard deviation 1.
+• Other heuristics:
+• Restricting use of certain SQL operators to protect against attacker trying to
+average noise out through many logically equivalent but syntactically distinct
+queries
+• Suppressing small counts
+• Modifying extreme values
+• Disallowing certain SQL operators (including OR)
+A Shout-Out to Aircloak
+• Promoting scrutiny by independent researchers
+• Aircloak Challenge:
+• Production Diffix, documentation, and support
+• Real datasets in test environment
+• $5,000 bounty
+Carrying it out in practice
+Pick a target
+Make linear queries with nice enough error
+Reconstruct
+How to run the actual attack?
+• Dinur-Nissim and Dwork-McSherry-Talwar give us LPs to solve for the
+reconstructed database given queries and answers.
+• What else do we need?
+• Respond on PollEverywhere
+• PollEv.com/rachelcummings333
+• Text rachelcummings333 and your message to 22333
+Dataset
+SELECT count(*) FROM loans
+WHERE client-id BETWEEN 2000 and 3000
+AND status = ‘C’
+Row Client ID Status = ‘C’
+1 2009 1
+2 2016 1
+3 2031 0
+… … …
+73 2970 1
+Gaussian Noise 𝑁(0,𝜎2)
+𝜎 #𝑐𝑜𝑛𝑑𝑖𝑡𝑖𝑜𝑛𝑠
+• Aircloak privacy: grows as :
+SELECT count(*) FROM loans
+1. WHERE client-id BETWEEN 2000 and 3000
+2. AND status = ‘C’
+3. AND ...
+• Huge oversimplification
+• Essentially accurate for random queries.
+• Naïve LP reconstruction fails:
+• Random query requires conditions, .
+𝑞 ⊆ [𝑛] 𝑂(𝑛) 𝜎 = 𝑂( 𝑛)• Large enough noise that Dinur-Nissim attack wouldn’t work
+Hashing: succinct “randomness”
+• Suppose hash(client-id,hk) true,false is “random”
+∈ { }
+for different hk.
+• Query
+𝑞h𝑘
+SELECT ... FROM ...
+WHERE ...
+AND hash(client-id,hk)
+• Challenge: random enough, succinct, and allowed by Diffix.
+A Very Hacky Hash
+170.5 = 4.1231056256176605498
+Multiplier
+Exponent
+Digit
+Even OR < 5
+hash(client-id, hk=(mult,exp,d,pred)):
+Does the d-th digit of
+(mult * client-id)^exp
+satisfy pred?
+𝜎 = 4• 1 new condition, .
+Summary
+SELECT count(*) FROM loans
+WHERE client-id BETWEEN 2000 and 3000
+AND status = ‘C’
+AND floor(100 * ((client-id * 2)^0.7) + 0.5)
+= floor(100 * ((client-id * 2)^0.7))
+Known: Which client-ids in 2000-3000
+are actually present (also, n).
+𝑋 𝑒 ∼ 𝑁(0,4)
+DMT LP:
+𝑠′
+Find minimizing
+sum of |error’|
+𝑛 = 73, 110, 130, 142 3500
+queries
+Output goal: List of client-
+ids in 2000-3000
+with status = ‘C’
+Carrying it out in practice
+Pick a target
+Make linear queries with nice enough error
+Reconstruct
+Perfect
+Reconstruction
+(on the data targeted)
+Dataset of client-ids
+and associated status
+Let’s dig deeper (simulated experiments)
+DMT LP: Varying , and number of queries
+𝜎 𝑛,
+(10 trials, 2550 queries) 𝜎 = 4
+(10 trials, )
+What do we see? Why?
+DiNi LP: Varying , and number of queries
+𝜎 B,
+(10 trials, 2550 queries)
+n = 100, 𝜎 = 4
+𝑛 = 100, (10 trials, )
+What do we see? Why?
+1. Don’t trust blanket claims about off-the-shelf
+privacy without investigating. If it sounds too good
+to be true, it might be.
+2. Even restricting access to anonymized data AND
+adding noise* to answers does not protect privacy
+*not enough noise. Much more on this to come…
+Today’s homework
+• Continue working on Homework 1 Part 1 (due Tues Feb 4 at 11:59pm)
+• Optional reading: Linear Program Reconstruction in Practice, by Aloni
+Cohen and Kobbi Nissim, 2018. https://arxiv.org/abs/1810.05692
+• This paper gives more detail on the reconstruction attack we saw today. The
+content of this lecture was taken from this paper.
+• More optional reading about the two LP attacks:
+• Revealing Information while Preserving Privacy by Irit Dinur and Kobbi Nissim:
+https://crypto.stanford.edu/seclab/sem-03-04/psd.pdf
+• The Price of Privacy and the Limits of LP Decoding by Cynthia Dwork, Frank
+McSherry, and Kunal Talwar: http://kunaltalwar.org/papers/lpdecoding.pdf
+Questions?
+Contextual Integrity
+Agenda:
+1. Taking a breather
+2. Contextual Integrity
+
+Feb. 10, 2024
+Contextual Integrity
+• Defined by Helen Nissenbaum in 1998, updated 2004
+• Philosopher’s version of formalizing privacy
+Two key principles:
+• “Privacy is about information flows”
+• E.g., Information flowing from me to you
+• “Definition of privacy should depend on the context”
+Contextual Integrity
+• Normative definition
+• Decides what’s is right/wrong based on subjective evaluation of norms
+• Different from most of what we’ll seen all semester (algorithmic)
+• Provides opportunity to incorporate laws and ethics into privacy design
+• Defines Privacy:
+Information flow is appropriate if it respects cultural norms
+Context
+• A context has:
+• Contextual purposes (why does the context exist in society)
+• Agent roles (actors operating in the context, engaging in tasks in support of
+purpose)
+• Information attributes (what types of information flow in this context)
+• Information norms (set of appropriate information flows in the context)
+• Transmission principles (normative restrictions on information flows)
+Healthcare context (Example)
+• Contextual purposes: preserving health of the people, identify novel
+disease treatments, train new medical professionals, etc
+• Agent roles: doctors, nurses, patients, insurance carriers, medical
+researchers, etc.
+• Information attributes: medical test results, treatment notes, blood
+type, patient demographics, insurance coverage level, billing info, etc.
+• Information norms (set of appropriate information flows in the
+context)
+• Transmission principles (normative restrictions on information flows)
+Contextual Integrity
+An information norm must have all five parameters specified
+1. The data subject
+2. 3. The sender of the data
+The recipient of the data
+4. The information type
+5. The transmission principle.
+All five parameters must be specified to evaluate appropriateness of a
+flow!
+Contextual Integrity
+• The transmission principle describes relevant normative details of
+how the information flow occurred:
+• with data subject consent
+• as mandated by law
+• for the purpose of X
+Does not include algorithmic aspects of the flow:
+• using an encrypted messaging service
+• with differential privacy
+Healthcare context (Example)
+• Contextual purposes: preserving health of the people, identify novel
+disease treatments, train new medical professionals, etc
+• Agent roles: doctors, nurses, patients, insurance carriers, medical
+researchers, etc.
+• Information attributes: medical test results, treatment notes, blood
+type, patient demographics, insurance coverage level, billing info, etc.
+• Information norms: A patient’s medical record may be sent from their
+primary care physician to a specialist when the patient requests a
+referral to that specialist
+• Transmission principles:
+Contextual Integrity
+• Information flow is appropriate if it respects cultural norms
+• Free parameter for cultural norms?
+• How to specify this formally?
+• Subjective evaluation
+• So general that it covers everything, but difficult to apply
+• Considers only unitary flows (e.g., I hand my data to you)
+• What about functions of large datasets?
+• What about uncertainty (either from privacy or from ML analysis)?
+Data Subject Data Sender Data Recipient Information Type Transmission
+principle
+In-class activity (groups of 3)
+1. 2. 3. (10 min) With your group, write down as many possible information
+flows as you can think of. Remember, all five parameters must be
+specified: data subject, data sender, data receiver, information type,
+transmission principles.
+(2 min) Each person fill out In-class quiz for today. It will ask you to
+write down one information flow, and decide if it’s appropriate or
+not. Remember: appropriate = respects cultural norms
+(20 min) Each group finds a partner group. Groups take turns going
+presenting their list of information flows and discussing with other
+group if it’s appropriate or not.
+Today’s Homework
+• Continue working on Homework 1 part 2 (due Tues Feb 11 at
+11:59pm)
+On Courseworks, due by Feb 11 at 10pm:
+• Watch a video and take a short quiz about differential privacy to
+prepare for our discussion next class
+Questions?
+Differential privacy:
+Definition and properties
+Agenda:
+1. Motivation and
+definition
+2. Interpret parameters
+3. DP Properties
+4. (if time) Database
+notation
+
+Feb. 12, 2025
+Defining privacy: Attempt 1
+Idea: Privacy is about protecting identities.
+• Attempt 1: “An analysis of a dataset D is private if no adversary can re-identify
+Alice’s portion of the data from the analysis.”
+We’ve seen LOTS of reasons why this not a good privacy goal
+Defining privacy: Attempt 2
+• Idea: Privacy is about promising people freedom from harm.
+• Attempt 2: “An analysis of a dataset D is private if the data analyst knows no
+more about Alice after the analysis than he knew about Alice before the
+analysis.”
+Defining privacy: Attempt 2
+• Problem: Impossible to achieve with meaningful learning.
+• Suppose an insurance company knows that Alice is a smoker.
+• An analysis that reveals that smoking and lung cancer are correlated might
+cause them to raise her rates!
+• Was her privacy violated?
+• This is a problem even if Alice was not in the database!
+• This is exactly the sort of information we want to be able to learn…
+Defining privacy: Attempt 3
+• Idea: Privacy is about promising people freedom from harm.
+• Attempt 3: “An analysis of a dataset D is private if the data analyst knows
+almost no more about Alice after the analysis than he would have known had
+he conducted the same analysis on an identical database with Alice’s data
+removed.”
+Differential privacy [DMNS 06]
+D
+Alice Bob Chris Donna Ernie
+Xavier
+Algorithm
+ratio bounded
+Pr [r]
+Differential privacy [DMNS ‘06]
+𝑀: 𝑇 𝑛 → 𝑅 (𝝐, 𝜹) ∀
+An algorithm is -differentially private if
+𝐷, 𝐷′ ∈ 𝑇 𝑛 ∀ 𝑆 ⊆ 𝑅
+neighboring and ,
+𝑃[𝑀(𝐷) ∈ 𝑆] ≤ 𝑒𝜖 𝑃[𝑀(𝐷′ ) ∈ 𝑆] + 𝛿
+Bound the “maximum amount” that one person’s data can change the
+output of a computation
+“DP addresses the paradox of learning nothing about an individual
+while learning useful information about a population. It is a definition,
+not an algorithm.”
+The Algorithmic Foundations of Differential Privacy, Dwork and Roth.
+7
+Guarantees of differential privacy
+𝑀: 𝑇 𝑛 → 𝑅 (𝝐, 𝜹) ∀
+An algorithm is -differentially private if
+𝐷, 𝐷′ ∈ 𝑇 𝑛 ∀ 𝑆 ⊆ 𝑅
+neighboring and ,
+𝑃[𝑀(𝐷) ∈ 𝑆] ≤ 𝑒𝜖 𝑃[𝑀(𝐷′ ) ∈ 𝑆] + 𝛿
+• Worst case over all pairs of neighboring databases
+• Doesn’t matter what everyone else’s data are
+• Doesn’t matter what data you have
+• Doesn’t matter what you could change your data to
+• Still have the privacy guarantee!
+Guarantees of differential privacy
+𝑀: 𝑇 𝑛 → 𝑅 (𝝐, 𝜹) ∀
+An algorithm is -differentially private if
+𝐷, 𝐷′ ∈ 𝑇 𝑛 ∀ 𝑆 ⊆ 𝑅
+neighboring and ,
+𝑃[𝑀(𝐷) ∈ 𝑆] ≤ 𝑒𝜖 𝑃[𝑀(𝐷′ ) ∈ 𝑆] + 𝛿
+• Worst case over all bad outcomes
+• Doesn’t matter what you are afraid might happen from the analysis
+• Still have the privacy guarantee!
+• If it happens, it would have happened even without your data
+• If it depends too much on your data, then it won’t happen
+In class activity
+• Please do the quiz with a partner (or two) and discuss your answers,
+but everyone needs to submit their own quiz answers on
+Courseworks
+• If you and your partner disagree or get a wrong answer, discuss more!
+Questions about any of the answers?
+What do DP mechanisms look like?
+• Always randomized in some way – “jittering” from the video
+• If we see a different answer with and without your data, can’t tell if it’s
+because of the randomness or because of you
+• Lots of different ways to add randomness
+• See one next and two more next class
+Randomized response [War ‘65]
+“Have you ever cheated on an exam?”
+1. 2. Each person flips 2 coins
+If the first is TAILS:
+Announce true answer
+3. Else (first is HEADS):
+If second is TAILS:
+Announce YES
+Else:
+Announce NO
+query (sensitive)
+w.p. 1/2 tell the truth
+w.p. 1/2 respond randomly
+Randomized response [War ‘65]
+Randomized response with unbiased coins is (ln3, 0)
+-differentially
+private.
+Randomized response can be used to estimate mean:
+^
+𝜇 = 2(#𝑌𝑒𝑠
+𝑛 −
+1
+4 )
+When n is small, variance will be large. We need a large dataset to
+estimate with high confidence.
+𝜇
+Privacy parameters – 𝜖
+𝑒𝜖
+• Factor looks like this:
+𝜖 = 0 𝑒0 = 1
+• means perfect privacy ( )
+• for all D,D’,S
+𝑃[𝑀(𝐷) ∈ 𝑆]= 𝑃[𝑀(𝐷′ ) ∈ 𝑆]
+• Can’t depend on the data at all (bad for learning)
+𝜖 = ∞ 𝑒∞ = ∞
+• means no privacy ( )
+•
+𝑃[𝑀(𝐷) ∈ 𝑆] ≤ ∞ ∗ 𝑃[𝑀(𝐷′ ) ∈ 𝑆]= ∞
+• Anything is allowed
+• Smaller 𝜖
+values mean better privacy
+Image credit: Google calculator mode
+Privacy parameters – How to choose ? 𝜖
+1
+• Historically, theorists suggested or
+𝜖 = 0.1 𝜖 =
+𝑛
+• very strong privacy guarantees
+𝜖 < 1 𝑒𝜖 ≈ 1 + 𝜖
+• when , can approximate and re-write DP as:
+𝑃[𝑀(𝐷) ∈ 𝑆] ≤ (1 + 𝜖) 𝑃[𝑀(𝐷′ ) ∈ 𝑆]
+• Current practitioners use bigger values,
+𝜖 = 1,2, 4, 10• give weaker privacy but better accuracy of analysis
+• Active research area with no “correct answer”. We’ll talk a lot
+more about this later.
+Privacy parameters – is small additive slack 𝛿
+𝛿
+• Why do we need ?
+• Imagine D,D’ are neighboring databases and say 𝑃[𝑀(𝐷) ∈ 𝑆] > 0
+𝑃[𝑀(𝐷′ ) ∈ 𝑆]= 0
+• Without we have:
+𝛿
+0 < 𝑃[𝑀(𝐷) ∈ 𝑆] ≤ 𝑒𝜖 𝑃[𝑀(𝐷′ ) ∈ 𝑆] ≤ 𝑒𝜖
+⋅ 0 = 0
+• Not possible for any !
+𝜖
+• Also useful if outcome has very small probability:
+𝑃[𝑀(𝐷) ∈ 𝑆] ≤ 𝑒𝜖 𝑃[𝑀(𝐷′ ) ∈ 𝑆] ≤ 𝑒𝜖
+⋅ 0.00000000001
+• Would need very large
+𝜖
+• term says it’s still DP as long as event 𝛿 𝑆
+is very unlikely
+𝛿 𝜖
+• allows for a very rare failure of the -DP guarantee
+and
+Privacy parameters – How small should be? 𝛿
+• If 𝛿= 1 𝜖 = 0
+• If then no privacy, even for :
+𝑃[𝑀(𝐷) ∈ 𝑆] ≤ 𝑒0 𝑃[𝑀(𝐷′ ) ∈ 𝑆] + 1
+• Only requires , meaningless
+𝑃[𝑀(𝐷) ∈ 𝑆] ≤ 1
+1
+𝛿=
+and 𝜖 = 0
+then allowed allowed to pick a random person from the
+𝑛
+database and output their data
+• Let D be the database with you, and D’ be the database without you, and S be the event
+that your data gets published
+1
+• and
+𝑃[𝑀(𝐷) ∈ 𝑆]=
+𝑃[𝑀(𝐷′ ) ∈ 𝑆]= 0
+𝑛
+1
+1
+1
+•
+= 𝑃[𝑀(𝐷) ∈ 𝑆] ≤ 𝑒0 𝑃[𝑀(𝐷′ ) ∈ 𝑆] +
+𝑛
+• Clearly shouldn’t be allowed
+1
+• We require 𝛿 <
+and even better if
+=
+𝑛
+𝑛
+𝛿= 𝑒−𝑛
+𝑛
+Importance of randomization
+• Randomization in DP algorithms is important!!
+• Imagine a non-random algorithm that had
+𝑀(𝐷) = 𝑠
+• Then and for any other
+𝑃[𝑀(𝐷) = 𝑠]= 1 𝑃[𝑀(𝐷) = 𝑟]= 0 𝑟
+𝛿= 0 𝐷′
+• When , then all neighboring must also have
+𝑃[𝑀(𝐷′ ) = 𝑟]= 0 , so
+𝑀(𝐷′ ) = 𝑠
+• And so on for their neighbors, and their neighbors…
+• Without randomization, all databases must have 𝑀(𝐷) = 𝑠
+output cannot depend on the data
+and the
+• This is still approximately true with 𝛿
+small values that are preferred
+𝛿 > 0
+, especially for the
+Another activity – DP definition
+• With a partner (or two), and without looking back at your notes, write
+down the definition of differential privacy. Try to recall as many of the
+details as possible.
+• You don’t need to submit anything for this
+Definition of differential privacy
+𝑀: 𝑇 𝑛 → 𝑅 (𝝐, 𝜹) ∀
+An algorithm is -differentially private if
+𝐷, 𝐷′ ∈ 𝑇 𝑛 ∀ 𝑆 ⊆ 𝑅
+neighboring and ,
+𝑃[𝑀(𝐷) ∈ 𝑆] ≤ 𝑒𝜖 𝑃[𝑀(𝐷′ ) ∈ 𝑆] + 𝛿
+• What parts are confusing that you want to discuss?
+Useful properties: post-processing
+If is -differentially private and is any function, then:
+𝑀(𝐷) (𝜖, 𝛿) 𝑓
+𝑓(𝑀(𝐷)) (𝜖, 𝛿)
+is -differentially private.
+“No adversary can break the privacy guarantee”
+Useful properties: composition
+If are -differentially private, then:
+𝑀1, …, 𝑀𝑘 (𝜖, 𝛿)
+𝑀(𝐷) ≡ (𝑀1(𝐷), …, 𝑀𝑘(𝐷)) is -differentially private.
+(𝑘𝜖, 𝑘𝛿)
+“Privacy guarantees degrade gracefully as more computations are
+performed”
+Useful properties: composition
+𝑀(𝐷) ≡ (𝑀1(𝐷), …, 𝑀𝑘(𝐷)) If are -differentially private and adaptively chosen,
+𝑀1, …, 𝑀𝑘 (𝜖, 𝛿)
+then:
+is -differentially private for any
+(𝜖′
+, 𝑘𝛿 + 𝛿′ )
+𝛿′ > 0
+and
+𝜖′
+= 𝜖 2𝑘ln
++ 𝑘𝜖(𝑒𝜖
+𝛿′
+− 1)= Θ(𝑘𝜖)
+Open research direction: Finding tighter composition theorems in special
+cases of interest (e.g., private deep learning)
+1
+Useful properties: group privacy
+𝐷, 𝐷′ 𝑘 𝑀 (𝜖, 𝛿)
+If two datasets differ in entries and is -differentially
+𝑆
+private, then for all outputs :
+Pr[𝑀(𝐷) ∈ 𝑆] ≤ 𝑒𝑘𝜖Pr[𝑀(𝐷′ ) ∈ 𝑆] + 𝑘𝛿
+.
+“similar datasets should have similar outputs”
+Differential privacy [DMNS ‘06]
+• Strong worst-case guarantees
+• Has a parameter describing strength of privacy guarantee
+• Great for learning population-level statistics/properties. Not good for
+learning about individuals or small groups (e.g., personalization)
+• Existing algorithmic toolkit for variety of data analysis tasks
+• Used in practice by Apple, Google, Uber, and U.S. Census
+25
+Notation
+is all possible courses and
+• Database contains data from individuals
+𝑥 𝑛
+• Data universe 𝑋
+is all possible data a person might have
+• Ex: For the question “Have you ever cheated on an exam?”, data
+universe is
+𝑋 = {𝑌𝑒𝑠, 𝑁𝑜}
+• Ex: For school transcripts, data universe 𝑋
+grades you could have taken
+• means the size of | 𝑋 | 𝑋
+or the number of possible data types
+• Ex: If data universe is , then
+𝑋 = {𝑌𝑒𝑠, 𝑁𝑜} 𝑋 = 2
+• We can store a database either as a matrix (or vector) as a histogram
+𝑥 ∈ ℕ|𝑋|
+𝑥 ∈ 𝑋𝑛
+or
+Database as matrix
+• Matrix 𝑥 ∈ 𝑋𝑛
+means that we’re going to store everyone’s
+data in one giant list, and person #1 will be stored in row 1,
+person #2 in row 2, etc.
+• We will use 𝑖
+to mean any arbitrary person in the database
+• Person will be stored in row
+𝑖 𝑖
+• Example:
+•
+[𝑌𝑒𝑠
+𝑌𝑒𝑠]
+𝑁𝑜
+• Data universe is
+𝑋 = {𝑌𝑒𝑠, 𝑁𝑜}
+Database as histogram
+• Histogram 𝑥 ∈ ℕ|𝑋|
+means that we’re going to count up how
+many people have each type of data
+• is a vector containing numbers, where the
+𝑥 ∈ ℕ|𝑋| | 𝑋 | 𝑖th
+number in 𝑥 𝑖th data type
+is # of people with
+• Matrix and histogram forms are equivalent
+For , can also write:
+𝑁𝑜
+•
+𝑥 ∈ 𝑋𝑛 𝑥 = [𝑌𝑒𝑠
+𝑌𝑒𝑠]
+• , 𝑥 ∈ ℕ|𝑋| 𝑋 = 2, 𝑥 = < 2,1 >because there are two people
+with Yes data and one person with No data
+Neighboring databases
+• Differential privacy is meant to protect one person’s data
+• Neighboring databases that are the same “except for one person’s data”
+• Definition: The ℓ1
+-distance between two databases (or vectors) is denoted
+𝑥− 𝑦 1
+and is defined as
+𝑋
+𝑥− 𝑦 1
+=
+∑
+| 𝑥𝑖− 𝑦𝑖 |
+𝑖=1
+• This measures how many entries are different between • Example: and has
+𝑥 = < 2,1 > 𝑦 = < 2,2 >
+2
+𝑥− 𝑦 1
+=
+∑
+| 𝑥𝑖− 𝑦𝑖 |= 2− 2 + 1− 2 = 0 + 1 = 1
+𝑖=1
+and
+𝑥 𝑦
+• By inspection, 1 person’s data has changed from to
+𝑥 𝑦
+Neighboring databases
+• Definition: If 𝑥− 𝑦 1
+≤ 1 𝑥 𝑦
+, then and are said to be
+neighboring databases.
+• This definition corresponds to adding or deleting one person’s
+data
+• Example: and means that we have added
+𝑥 = < 2,1 > 𝑦 = < 2,2 >
+one person with datatype “No”.
+• We could also think of changing one person’s data.
+• Example: Take 𝑥 = < 2,1 >
+and change the one person who said No to
+say Yes. Then we would have 𝑦 = < 3,0 > . But then
+𝑥− 𝑦 1
+= 2.• This definition is equivalent up to a factor of 2
+Today’s Homework
+On Courseworks:
+1. 2. I’ll post a video covering any slides we didn’t get to in class
+Read Chapter 2 of the DP textbook
+https://www.cis.upenn.edu/~aaroth/Papers/privacybook.pdf
+3. 4. Post on discussion board about when DP is/isn’t appropriate
+Muddiest point: What is confusing or what do you want to learn?
+Questions?
+Differential privacy:
+Laplace and Exponential Mechanisms
+Agenda:
+1. Laplace Mech. (def,
+privacy, accuracy)
+2. Exponential Mech. (def,
+privacy, accuracy)
+
+Feb. 17, 2025
+Review of notation (from video)
+• Database 𝑥 contains data from 𝑛 individuals
+• Data universe 𝑋 is all possible data a person might have
+• Database can be stored as a matrix (or vector) 𝑥 ∈ 𝑋𝑛 or as a
+histogram 𝑥 ∈ ℕ|𝑋|
+• For now we’ll use histogram notation 𝑥 ∈ ℕ|𝑋|
+Review of neighboring databases (from video)
+• Definition: The ℓ1-distance between two databases (or vectors)
+is denoted 𝑥 − 𝑦 1 and is defined as 𝑥 − 𝑦 1 =
+σ𝑖=1
+𝑋 |𝑥𝑖− 𝑦𝑖|.
+This measures how many entries are different between 𝑥 and 𝑦
+• Definition: If 𝑥 − 𝑦 1 ≤ 1, then 𝑥 and 𝑦 are said to be
+neighboring databases.
+Neighboring databases are the same except for one person’s data
+Review of differential privacy (from last time)
+• An algorithm 𝑀: 𝑋𝑛 → 𝑅 is (𝝐, 𝜹)-differentially private if ∀
+neighboring 𝐷, 𝐷′ ∈ 𝑋𝑛 and ∀ 𝑆 ⊆ 𝑅,
+𝑃 𝑀 𝐷 ∈ 𝑆 ≤ 𝑒𝜖 𝑃 𝑀 𝐷′ ∈ 𝑆 + 𝛿
+• Worst-case over all databases and over all outcomes
+• Smaller 𝜖, 𝛿 mean better privacy
+• Usually like to have 𝜖 < 1 and 𝛿 ≪ 1
+𝑛
+• Randomization is necessary for differentially private
+algorithms
+• All DP algorithms have some kind of random noise somewhere in
+the process
+Muddiest point responses
+• Understanding privacy and accuracy – how much does noise
+harm the results?
+• How to prove/apply DP? More examples please!
+• Usefulness of DP in business setting?
+• How to pick epsilon? What’s a good value?
+• What does effective DP policy look like? How does it differ in
+government vs industry?
+• Connections to AI models?
+Answering functions privately
+• The Laplace Mechanism is a tool for privately answering
+numerical functions 𝑓: ℕ|𝑋| → ℝ. It computes the true
+answer to the function, and then adds some random noise.
+• Definition: The sensitivity of a function 𝑓: ℕ|𝑋| → ℝ is
+Δ𝑓 = max
+𝑥,𝑦 𝑛𝑒𝑖𝑔ℎ𝑏𝑜𝑟𝑠 𝑓 𝑥 − 𝑓 𝑦
+• Captures how much the value of the function can change in
+the worst case by changing one person’s data
+• Example 1: 𝑓 𝑥 is # of blue-eyed people in database
+• Δ𝑓=1
+• Example 2: 𝑓 𝑥 is average salary in database
+• Δ𝑓 = ∞ (not a good query!!)
+Laplace distribution
+• Let 𝑌 ∼ 𝐿𝑎𝑝(𝑏) be a random variable with Laplace
+distribution with parameter 𝑏
+• Two-sided exponential centered around 0
+• Pdf of Laplace distribution with parameter 𝑏:
+1
+𝑦
+𝑓 𝑦 =
+2𝑏 exp −
+𝑏
+• 𝐸 𝑌 = 0
+• 𝑉𝑎𝑟 𝑌 = 2𝑏2
+• Smaller 𝑏 is pointier (lower variance),
+larger 𝑏 is flatter (higher variance)
+Image credit: Wikipedia
+Laplace Mechanism
+• Definition: Given a function 𝑓: ℕ|𝑋| → ℝ, the Laplace
+Mechanism is
+𝑀𝐿 𝑥, 𝑓, 𝜖 = 𝑓 𝑥 + 𝑌
+where 𝑌 ∼ 𝐿𝑎𝑝 Δ𝑓
+𝜖.
+• Compute the true value of the function 𝑓 𝑥 and then add
+Laplace noise that depends on the function’s sensitivity and
+your desired privacy
+• Larger sensitivity Δ𝑓 or smaller 𝜖 means more noise
+Laplace Mechanism - Privacy
+Theorem: The Laplace Mechanism 𝑀𝐿 𝑥, 𝑓, 𝜖 is 𝜖-differentially
+private.
+Proof: Let 𝑥, 𝑦 be any neighboring databases, let 𝑓: ℕ|𝑋| → ℝ be
+any function, and let 𝑧 ∈ ℝ be any real number. Then we need to
+show:
+Pr 𝑀𝐿 𝑥, 𝑓, 𝜖 = 𝑧
+Pr 𝑀𝐿 𝑦, 𝑓, 𝜖 = 𝑧
+≤ 𝑒𝜖
+=
+Pr 𝐿𝑎𝑝 Δ𝑓
+𝜖
+Pr 𝐿𝑎𝑝 Δ𝑓
+𝜖
+𝜖 𝑓 𝑥 − 𝑧
+Δ𝑓
+𝜖 𝑓 𝑦 − 𝑧
+Pr 𝑀𝐿 𝑥, 𝑓, 𝜖 = 𝑧
+Pr 𝑀𝐿 𝑦, 𝑓, 𝜖 = 𝑧
+=
+𝜖
+2Δ𝑓 exp −
+𝜖
+2Δ𝑓 exp −
+𝜖 𝑓 𝑥 − 𝑧
+Δ𝑓 +
+Δ𝑓
+𝜖 𝑓 𝑦 − 𝑧
+Δ𝑓
+𝜖 𝑓 𝑦 − 𝑧 − 𝑓 𝑥 − 𝑧
+Δ𝑓
+𝜖 ∗ |𝑓 𝑦 − 𝑓 𝑥 |
+Δ𝑓
+𝜖 ∗ Δ𝑓
+≤ exp
+Δ𝑓
+= exp 𝜖
+= 𝑓 𝑥 − 𝑧
+= 𝑓 𝑦 − 𝑧
+(Laplace noise must
+be difference)
+(pdf of Laplace)
+(laws of exponents)
+= exp −
+= exp
+(distributive property)
+≤ exp
+(triangle inequality)
+(defn of sensitivity)
+Laplace Mechanism - Accuracy
+1
+Δ𝑓
+∗
+𝜖
+Theorem: Let 𝑓: ℕ|𝑋| → ℝ be any function. For all 𝛽 ∈ (0,1],
+Pr 𝑓 𝑥 − 𝑀𝐿 𝑥, 𝑓, 𝜖 ≤ ln
+≥ 1 − 𝛽
+𝛽
+• This says with high probability, you’re going to get answers
+that are close to the true answers.
+• “Close” depends on high probability parameter, function
+sensitivity, and privacy parameter
+• This expression comes from tail bound on Laplace
+distribution
+Laplace Privacy-Accuracy Tradeoff
+• Privacy alone is easy (throw away the data). We want both
+privacy and accurate answers.
+• Theorem: The Laplace Mechanism 𝑀𝐿 𝑥, 𝑓, 𝜖 is 𝜖-DP.
+• Theorem: Let 𝑓: ℕ|𝑋| → ℝ be any function. For all 𝛽 ∈ (0,1],
+Pr 𝑓 𝑥 − 𝑀𝐿 𝑥, 𝑓, 𝜖 ≥ ln
+1
+𝛽
+Δ𝑓
+∗
+≤ 𝛽
+𝜖
+• These two theorems show the tradeoff between privacy and
+accuracy: smaller 𝜖 gives better privacy and worse accuracy
+We’ll talk next time about whether this is useful
+Laplace example 0
+• What is the sensitivity of the function and how much
+Laplace-distributed noise would you add to preserve 𝜖-
+differential privacy? (Your answers should be of the form
+“Lap(b)” for some b.)
+• Example 0: The real-valued query (“How many individuals in
+the database are male?”)
+• Each row of the database contains one bit: whether the
+person the row corresponds to is male or non-male.
+• Two databases x and y are neighboring if we can obtain one
+from the other by removing a row or by adding a row that is
+allowed to take arbitrary values.
+Laplace example 0
+• Example 0: The real-valued query (“How many individuals in
+the database are male?”)
+• Recall that:
+Δ𝑓 = max
+𝑥,𝑦 𝑛𝑒𝑖𝑔ℎ𝑏𝑜𝑟𝑠 𝑓 𝑥 − 𝑓 𝑦
+• The sensitivity of the query is 1. Adding or removing one
+person from the database can only change the count of
+males by 0 or 1, so the maximum possible value is 1.
+• Since Δ𝑓 = 1, we can add noise 𝐿𝑎𝑝 1
+to each dimension
+𝜖
+to preserve 𝜖-differential privacy
+High-dimensional Laplace Mechanism
+• We can also think about answering multiple functions at one
+time, modeled as a high dimensional function that outputs 𝑘
+numbers to answer 𝑘 functions at once
+• Definition: The ℓ1-sensitivity of a function 𝑓: ℕ|𝑋| → ℝ𝑘 is
+Δ𝑓 = max
+𝑥,𝑦 𝑛𝑒𝑖𝑔ℎ𝑏𝑜𝑟𝑠 𝑓(𝑥) − 𝑓(𝑦) 1
+• Recall the ℓ1-distance between two vectors is 𝑥 − 𝑦 1 =
+σ𝑖=1
+𝑋 |𝑥𝑖− 𝑦𝑖|.
+• This extends our same notion of sensitivity that measured
+how much one person’s data can change the answer.
+High-dimensional Laplace Mechanism
+• Definition: Given a function 𝑓: ℕ|𝑋| → ℝ𝑘, the Laplace
+Mechanism is
+𝑀𝐿 𝑥, 𝑓, 𝜖 = 𝑓 𝑥 +< 𝑌 1, … , 𝑌 𝑘 >
+where all 𝑌 𝑖∼ 𝐿𝑎𝑝 Δ𝑓
+𝜖 independently.
+• Adds Laplace noise independently for each dimension of the
+function 𝑓.
+• Very important that all 𝑌 𝑖 are drawn fresh and independent.
+Reusing noise does not satisfy differential privacy!
+High-dimensional Laplace Mechanism
+• Theorem: The Laplace Mechanism 𝑀𝐿 𝑥, 𝑓, 𝜖 is 𝜖-differentially
+private.
+• Our privacy guarantees are unchanged because we have adjusted
+the sensitivity to account for the new high-dimensional sensitivity
+• Theorem: Let 𝑓: ℕ|𝑋| → ℝ𝑘 be any function and let 𝑦 =
+𝑀𝐿 𝑥, 𝑓, 𝜖 . Then for all 𝛽 ∈ (0,1],
+𝑘
+Pr 𝑓 𝑥 − 𝑦 1 ≥ ln
+𝛽
+Δ𝑓
+𝜖
+≤ 𝛽
+• There is an extra ln(𝑘) factor in the additive distance from the
+correct answer. This is because we have had to add more noise to
+achieve the same privacy guarantee, and this extra noise harms
+accuracy.
+∗
+Laplace example 1
+• What is the ℓ1-sensitivity of the function and how much
+Laplace-distributed noise would you add to preserve 𝜖-
+differential privacy? (Your answers should be of the form
+“Lap(b)” for some b.)
+• Example 1: The vector-valued query (“How many individuals
+in the database are students?", “How many individuals in the
+database are male students?”)
+• PollEverywhere! – make sure to include your name!!
+PollEv.com /rachelcummings333
+• PollEv.com /rachelcummings333
+• Text rachelcummings333 and your message to 22333
+Laplace example 1
+• Each row of the database contains two bits: whether the
+person the row corresponds to is a student or not, and
+whether the person is male or not.
+• Two databases x and y are neighboring if we can obtain one
+from the other by removing a row or by adding a row that is
+allowed to take arbitrary values in both bits.
+• Recall that
+Δ𝑓 = max
+𝑥,𝑦 𝑛𝑒𝑖𝑔ℎ𝑏𝑜𝑟𝑠 𝑓(𝑥) − 𝑓(𝑦) 1
+= max
+𝑥,𝑦 𝑛𝑒𝑖𝑔ℎ𝑏𝑜𝑟𝑠 𝑓 1 𝑥 − 𝑓 1 𝑦 + 𝑓 2 𝑥 − 𝑓 2 𝑦
+where 𝑓 1 and 𝑓 2 are respectively the first and second queries
+of our vector-valued query.
+Laplace example 1
+• Example 1: The vector-valued query (“How many individuals
+in the database are students?", “How many individuals in the
+database are male students?”)
+• The sensitivity of the query is 2: if we add or remove a male
+student from the database, then the answer to both queries
+changes by 1, and therefore Δ𝑓 = 1 + 1 = 2
+• We can add noise 𝐿𝑎𝑝 2
+𝜖 to each dimension to preserve 𝜖-
+differential privacy.
+• Note here you have to think about the worst-case student to
+add/remove. If you had just thought about female students,
+you would have gotten Δ𝑓 = 1.
+Laplace example 2
+• Example 2: The vector-valued query (“How many individuals
+in the database are students?", “How many individuals in the
+database are students?")
+• [Yes, the same question twice.]
+• The sensitivity of the query is 2: if we add or remove a male
+student from the database, then the answer to both queries
+changes by 1, and therefore Δ𝑓 = 1 + 1 = 2
+• We can add noise 𝐿𝑎𝑝 2
+𝜖 to each dimension to preserve 𝜖-
+differential privacy.
+• Alternative answer: Add noise 𝐿𝑎𝑝 1
+𝜖 to answer the query
+once, then duplicate the answer which is private by post-
+processing.
+Laplace example 3
+• Example 3: The vector-valued query (“How many individuals
+in the database are male students?", “How many individuals
+in the database are non-male students?”)
+• The sensitivity of the query is 1. The addition or removal of
+one person from the database can only change either the
+count related to males or the count related to non-males, but
+not both. In other words, the answer to one of the queries
+stays constant while the other changes by at most 1, and
+therefore
+Δ𝑓 = 0 + 1 = 1
+• Since Δ𝑓 = 1, we can add noise 𝐿𝑎𝑝 1
+𝜖
+to preserve 𝜖-differential privacy
+to each dimension
+Histogram queries
+• This property persists beyond this example. If it is the case that
+one person’s data can only change one of the values of a high-
+dimensional function 𝑓: ℕ|𝑋| → ℝ𝑘, then we call that function a
+histogram query.
+• Examples:
+• Binary answers (Yes, No)
+• Age in buckets: <20, 20-29, 30-39, 40-49, etc.
+• In these cases, we don’t have to add noise that depends on 𝑘,
+as we saw in the last example with Δ𝑓 = 1, and noise 𝐿𝑎𝑝 1
+𝜖.
+Comparing histogram queries w/ composition
+Histogram:
+• Consider a k-dimensional histogram query 𝑓: ℕ|𝑋| → ℝ𝑘 that counts
+how many people in each of k age buckets
+• E.g.,<20, 20-29, 30-39, 40-49, 50-59, 60+
+• The sensitivity of 𝑓 is Δ𝑓 = 1 because changing one person’s data
+only changes the count in one bucket by 1
+• Can add noise 𝐿𝑎𝑝 1
+𝜖 to each count to get 𝜖-DP
+• Only works on disjoint queries!
+Comparing histogram queries w/ composition
+Composition:
+• Consider a k-dimensional histogram query 𝑓: ℕ|𝑋| → ℝ𝑘 that counts
+how many people in each of k age buckets
+• E.g.,<20, 20-29, 30-39, 40-49, 50-59, 60+
+• Can also treat each age bucket like it’s on 1-dimensional query with
+sensitivity Δ𝑓 = 1, since changing one person’s data can change the
+count in that bucket by 1
+• Can add noise 𝐿𝑎𝑝 1
+𝜖 to each count to get 𝜖-DP for one single
+count.
+• By composition, this gives 𝑘𝜖-DP for all k counts
+• Works for all queries
+Laplace example 4
+• Example 4: The vector-valued query (“What fraction of the
+individuals in the database are students?", “What fraction of the
+individuals in the database are female students?")
+• [Assume there are n individuals in the database.]
+• The sensitivity of the query is 2
+: if we remove a female student from
+𝑛
+the database, then the answer to both queries changes by 1
+, and
+𝑛
+1
+therefore Δ𝑓 =
++ 1
+2
+=
+𝑛
+𝑛
+• We can add noise 𝐿𝑎𝑝 2
+𝑛𝜖 to each dimension to preserve 𝜖-
+differential privacy.
+• For fractional queries, it’s sometimes easier to use the “change one
+person” definition instead of “adding/removing one person” so the
+denominator is fixed.
+𝑛
+Answering non-numeric functions privately
+• Laplace Mechanism works great for answering real-valued
+functions where you can add random noise to the answer
+• What about other functions?
+• Exponential Mechanism will handle functions 𝑓: ℕ|𝑋| → ℛ
+that maps from databases to some arbitrary output range
+• Examples:
+• What is the most common eye color in the database?
+• Which state has the most people in the database?
+Answering non-numeric functions privately
+• The Exponential Mechanism assigns a numeric score to each
+possible output, and randomly sample an output based on
+this score.
+• Before explaining the mechanism and its sampling, let’s talk
+about the score function
+Exponential Mechanism - score function
+• The quality of an outcome is measured by a score function
+𝑞: ℕ|𝑋| × ℛ → ℝ
+where 𝑞(𝑥, 𝑟) is a measure of how good outcome 𝑟 would be
+on database 𝑥.
+• The choice of quality score should depend on the application
+• Example 1: “What is the most common eye color?”
+• What is an example of a reasonable quality score?
+• 𝑞(𝑥, 𝑟) is number of people in database 𝑥 who have eye color 𝑟
+• Desirable properties of the score function: (1) better answers
+get higher scores, (2) capture nuances between good-
+medium-bad outcomes
+Score function sensitivity
+is
+• Tailor the randomization to the sensitivity of the function
+computed on the database
+• This time the ”function” will be our score function 𝑞
+• Definition: The sensitivity a score function 𝑞: ℕ|𝑋| × ℛ → ℝ
+Δ𝑞 = max
+max
+𝑟∈ℛ
+𝑥,𝑦 𝑛𝑒𝑖𝑔ℎ𝑏𝑜𝑟𝑠 𝑞 𝑥, 𝑟 − 𝑞 𝑦, 𝑟
+• This still measures the maximum change in the sensitivity
+function’s value if one person changes their data
+• Note that we don’t talk about “neighboring outputs” because
+that doesn’t make sense here
+Exponential Mechanism [MT07]
+𝜖 ∗ 𝑞 𝑥, 𝑟
+• Definition: Given a quality score 𝑞: ℕ|𝑋| × ℛ → ℝ, the
+Exponential Mechanism is defined as:
+𝑀𝐸 𝑥, 𝑞, 𝜖 = 𝑜𝑢𝑡𝑝𝑢𝑡 𝑟 ∈ ℛ 𝑤𝑖𝑡ℎ 𝑝𝑟𝑜𝑏𝑎𝑏𝑖𝑙𝑖𝑡𝑦 ∝ exp
+2Δ𝑞
+• ∝ or “proportional to” ensures a valid probability distribution with
+total probability 1
+• We place higher weight on outcomes with higher quality, so we’re
+more likely to pick an outcome with with high quality
+• “Biased sampling” – Pick randomly, but make sure you’re more
+likely to pick good things
+Exponential Mechanism – Example 1
+“What is the most common eye color?”
+• 𝑋 =
+• 𝑥 ∈ ℕ|𝑋| is
+• ℛ =
+• 𝑞(𝑥, 𝑟) =
+• Δ𝑞 = 1
+• 𝑀𝐸 𝑥, 𝑞, 𝜖 =
+Exponential Mechanism – Example 1
+“What is the most common eye color?”
+• 𝑋 = {brown, blue, green, …}
+• 𝑥 ∈ ℕ|𝑋| is a database of eye colors
+• ℛ = {brown, blue, green, …} = 𝑋
+• 𝑞(𝑥, 𝑟) = number of people in database 𝑥 with eye color 𝑟
+• Δ𝑞 = 1 because each person can have at most one eye color (this is
+a histogram query)
+𝜖∗𝑞 𝑥,𝑟
+• 𝑀𝐸 𝑥, 𝑞, 𝜖 = 𝑜𝑢𝑡𝑝𝑢𝑡 𝑟 ∈ ℛ 𝑤𝑖𝑡ℎ 𝑝𝑟𝑜𝑏𝑎𝑏𝑖𝑙𝑖𝑡𝑦 ∝ exp
+2Δ𝑞
+Exponential Mechanism – Example 2
+“Which state has the highest population?”
+• 𝑋 =
+• 𝑥 ∈ ℕ|𝑋| is
+• ℛ =
+• 𝑞(𝑥, 𝑟) =
+• Δ𝑞 = 1
+• 𝑀𝐸 𝑥, 𝑞, 𝜖 =
+Exponential Mechanism – Example 2
+“Which state has the highest population?”
+• 𝑋 = set of all states
+• 𝑥 ∈ ℕ|𝑋| is a database of number of people who live in each state
+• ℛ = set of all states = 𝑋
+• 𝑞(𝑥, 𝑟) = number of people in database 𝑥 from state 𝑟
+• Δ𝑞 = 1 because each person can live in at most one state (this is a
+histogram query)
+𝜖∗𝑞 𝑥,𝑟
+• 𝑀𝐸 𝑥, 𝑞, 𝜖 = 𝑜𝑢𝑡𝑝𝑢𝑡 𝑟 ∈ ℛ 𝑤𝑖𝑡ℎ 𝑝𝑟𝑜𝑏𝑎𝑏𝑖𝑙𝑖𝑡𝑦 ∝ exp
+2Δ𝑞
+Exponential Mechanism – Example 3
+“What price should I post to maximize revenue?”
+• 𝑋 = ℝ+ willingness to pay for the item for sale
+• 𝑥 ∈ ℕ|𝑋| is a database of values for the item (or buyer types, bids, etc)
+• ℛ = ℝ+ is price posted
+• 𝑞(𝑥, 𝑟) = revenue from posting price 𝑟 to buyers with values of those
+in database 𝑥
+• Δ𝑞 =? ? (depends whether values/prices can be unbounded)
+𝜖∗𝑞 𝑥,𝑟
+• 𝑀𝐸 𝑥, 𝑞, 𝜖 = 𝑜𝑢𝑡𝑝𝑢𝑡 𝑟 ∈ ℛ 𝑤𝑖𝑡ℎ 𝑝𝑟𝑜𝑏𝑎𝑏𝑖𝑙𝑖𝑡𝑦 ∝ exp
+2Δ𝑞
+Exponential Mechanism – Example 3
+Notes on this example
+• For Δ𝑞 to be bounded we need an upper bound on prices and/or
+values, otherwise change in revenue from adding/deleting one person
+can be unbounded
+• For practical implementation, we should discretize 𝑋 and ℛ. This
+yields tradeoff between optimality and efficiency in the standard way.
+• Example 3.5 in the book illustrates why EM is preferred over LM for
+pricing. Key idea is that pricing even slightly above the optimal price
+could yield zero revenue, so adding unbiased noise (Laplace) doesn’t
+work.
+Exponential Mechanism - Privacy
+Theorem [MT ‘07]: The Exponential Mechanism 𝑀𝐸 𝑥, 𝑞, 𝜖 is 𝜖-
+differentially private.
+Proof: Let 𝑥, 𝑦 be any neighboring databases, let 𝑞: ℕ|𝑋| × ℛ → ℝ
+be any quality score, and let r ∈ ℛ be any allowed output. Then
+we need to show:
+Pr 𝑀𝐸 𝑥, 𝑞, 𝜖 = 𝑟
+Pr 𝑀𝐸 𝑦, 𝑞, 𝜖 = 𝑟
+≤ 𝑒𝜖
+(Note this is an extremely similar starting point as for the Laplace
+Mechanism)
+𝜖 ∗ 𝑞 𝑥, 𝑟
+Pr 𝑀𝐸 𝑥, 𝑞, 𝜖 = 𝑟
+Pr 𝑀𝐸 𝑦, 𝑞, 𝜖 = 𝑟
+=
+exp
+σ𝑟′∈ℛ exp
+exp
+σ𝑟′∈ℛ exp
+2Δ𝑞
+𝜖 ∗ 𝑞 𝑥, 𝑟′
+2Δ𝑞
+𝜖 ∗ 𝑞 𝑦, 𝑟
+(definition of
+Exponential Mech)
+2Δ𝑞
+𝜖 ∗ 𝑞 𝑦, 𝑟′
+𝜖 ∗ 𝑞 𝑥, 𝑟
+2Δ𝑞
+𝜖 ∗ 𝑞 𝑦, 𝑟′
+2Δ𝑞
+𝜖 ∗ 𝑞 𝑦, 𝑟
+2Δ𝑞
+𝜖 ∗ 𝑞 𝑥, 𝑟′
+exp
+σ𝑟′∈ℛ exp
+=
+∗
+exp
+2Δ𝑞
+σ𝑟′∈ℛ exp
+2Δ𝑞
+(Why can’t we just cancel out the second term??)
+Let’s focus on just the first term for now…
+(Law of Exponents,
+same as in proof of
+Laplace Mech)
+This looks like what we saw for the Laplace Mechanism
+𝜖 ∗ 𝑞 𝑥, 𝑟
+exp
+exp
+2Δ𝑞
+𝜖 ∗ 𝑞 𝑦, 𝑟
+𝜖 ∗ 𝑞 𝑥, 𝑟
+𝜖 ∗ 𝑞 𝑦, 𝑟
+−
+= exp
+(laws of exponents)
+2Δ𝑞
+= exp
+2Δ𝑞
+𝜖 ∗ 𝑞 𝑥, 𝑟 − 𝑞 𝑦, 𝑟
+2Δ𝑞
+𝜖 ∗ Δ𝑞
+2Δ𝑞
+(distributive property)
+≤ exp
+≤ exp
+2Δ𝑞
+𝜖
+(defn of sensitivity)
+2
+We have shown that for the first term,
+𝜖 ∗ 𝑞 𝑥, 𝑟
+exp
+2Δ𝑞
+𝜖
+≤ exp
+𝜖 ∗ 𝑞 𝑦, 𝑟
+2
+exp
+2Δ𝑞
+𝜖 ∗ 𝑞 𝑥, 𝑟
+𝜖 ∗ 𝑞 𝑦, 𝑟
+Or equivalently:
+𝜖
+exp
+≤ exp
+2Δ𝑞
+2 exp
+2Δ𝑞
+Next we will apply this to the second term, which is a sum of a bunch of
+terms like that.
+Pr 𝑀𝐸 𝑥, 𝑞, 𝜖 = 𝑟
+Pr 𝑀𝐸 𝑦, 𝑞, 𝜖 = 𝑟
+𝜖
+≤ exp
+2
+𝜖
+= exp
+2
+𝜖 ∗ 𝑞 𝑥, 𝑟
+𝜖 ∗ 𝑞 𝑦, 𝑟′
+exp
+2Δ𝑞
+=
+∗
+𝜖 ∗ 𝑞 𝑦, 𝑟
+2Δ𝑞
+σ𝑟′∈ℛ exp
+σ𝑟′∈ℛ exp
+𝜖 ∗ 𝑞 𝑥, 𝑟′
+2Δ𝑞
+𝜖 ∗ 𝑞 𝑥, 𝑟′
+2Δ𝑞
+𝜖 ∗ 𝑞 𝑥, 𝑟
+exp
+𝜖
+σ𝑟′∈ℛ exp
+2 exp
+∗
+𝜖
+σ𝑟′∈ℛ exp
+∗ exp
+σ𝑟′∈ℛ exp
+2Δ𝑞
+𝜖 ∗ 𝑞 𝑥, 𝑟′
+σ𝑟′∈ℛ exp
+𝜖
+∗ exp
+2
+= exp 𝜖
+2Δ𝑞
+2
+∗
+𝜖
+2Δ𝑞
+𝜖 ∗ 𝑞 𝑥, 𝑟′
+2Δ𝑞
+= exp
+2
+Exponential Mechanism - Accuracy
+• Theorem [MT ‘07]: Let 𝑟 ∈ ℛ be the output of the 𝑀𝐸 𝑥, 𝑞, 𝜖.
+Then, for all 𝛽 ∈ (0,1],
+2Δ𝑞 ∗ ln Τ
+|ℛ| 𝛽
+Pr 𝑞 𝑥, 𝑟 − max
+𝑟′∈ℛ 𝑞 𝑥, 𝑟′ ≥
+𝜖
+≤ 𝛽
+• This says with high probability, you’re going to pick an outcome
+that is close to the best possible outcome.
+• “Best possible” means highest quality score
+• “Close” depends on high probability guarantee, score sensitivity,
+and privacy parameter
+Exponential Privacy-Accuracy Tradeoff
+• As with the Laplace Mechanism, these two theorems
+together show a tradeoff between privacy and accuracy
+• Theorem [MT ‘07]: The Exponential Mechanism 𝑀𝐸 𝑥, 𝑞, 𝜖 is
+𝜖-differentially private.
+• Theorem [MT ‘07]: Let 𝑟 ∈ ℛ be the output of the
+𝑀𝐸 𝑥, 𝑞, 𝜖 . Then, for all 𝛽 ∈ (0,1],
+2Δ𝑞 ∗ ln Τ
+|ℛ| 𝛽
+Pr 𝑞 𝑥, 𝑟 − max
+𝑟′∈ℛ 𝑞 𝑥, 𝑟′ ≥
+𝜖
+• Smaller 𝜖 gives better privacy and worse accuracy
+≤ 𝛽
+Today’s homework
+On Courseworks:
+1. 2. 3. 4. Reading from the DP textbook
+https://www.cis.upenn.edu/~aaroth/Papers/privacybook.pdf
+• Section 3.3 up to bottom of page 34
+• Section 3.4 up to bottom of page 40
+• Feel free to skip proofs
+Technical assignment with examples implementing the Laplace
+Mechanism
+Technical assignment with example implementing the Exponential
+Mechanism
+(Optional but encouraged) Watch videos with proofs of privacy for
+Laplace and Exponential Mechanisms
+Questions?
+Differential privacy:
+Local/central models, DP in practice, and picking 𝜖
+Agenda:
+1. Local vs. Central
+models
+2. Examples of DP use in
+practice
+3. How to pick epsilon?
+
+Feb. 19, 2025
+So far… Finally…
+Laplace Mechanism [DMNS ‘06]
+“Have you ever cheated on an exam?”
+1. Each person tells me their true answer
+2. I compute μ(D)
+1/𝜖3. I sample noise from Lap( )
+4. Announce μ(D) + noise
+Randomized response [W ‘65]
+“Have you ever cheated on an exam?”
+1. 2. Each person flips 2 coins
+If the first is TAILS:
+Announce true answer
+3. Else (first is HEADS):
+If second is TAILS:
+Announce YES
+Else:
+Announce NO
+Who adds noise?
+Central model
+• Requires trusted party
+collects and sees data
+• Add less noise
+(i.e., more accurate)
+• e.g., Laplace Mechanism
+μ(D)
+Local model
+• Add noise locally (i.e.,
+doesn’t require trust)
+• More error because can’t
+coordinate noise
+• e.g., Randomized
+Response
+Central model
+𝑀: 𝒳𝑛 → 𝑅 (𝝐, 𝜹) ∀
+An algorithm is -differentially private if
+𝐷, 𝐷′ ∈ 𝒳𝑛 ∀ 𝑆 ⊆ 𝑅
+neighboring databases and ,
+Pr[𝑀(𝐷) ∈ 𝑆] ≤ 𝑒𝜖 𝑃 𝑟[𝑀(𝐷′ ) ∈ 𝑆] + 𝛿
+Image credit: KLNRS ‘08
+6
+Local model
+An algorithm 𝑀: 𝒳 → 𝑅 𝝐 ∀
+is an –local randomizer if inputs
+𝑥, 𝑥′ ∈ 𝒳 ∀ 𝑆 ⊆ 𝑅
+and ,
+Pr[𝑀(𝑥) ∈ 𝑆] ≤ 𝑒𝜖Pr[𝑀(𝑥′ ) ∈ 𝑆]
+Differential privacy for a database of size n=1 Even though the
+definition is the same,
+practical meaning of
+𝝐
+is not the same in
+both models!
+Image credit: KLNRS ‘08
+7
+Local model use in practice
+• Google uses local DP for Chrome crash reports
+• Google wants to know which websites/plugins/settings/etc crash chrome
+the most often, so they can squash those bugs
+• When Chrome crashes, your device sends back a report
+• Use a fancy version of RR (RAPPOR)
+• Goal is only to find most common
+site that crashed, nothing else
+• https://arxiv.org/abs/1407.6981
+Local model use in practice
+• Apple uses local DP for emoji prediction
+• Apple wants to know which emojis are most likely to be used after
+which words, to better predict/suggest them
+• Train a model based on frequency of words/emojis
+• Obviously don’t want to send data back to server
+about everything you type!
+• Use local DP to train “on device”
+• https://machinelearning.apple.com/research/
+learning-with-privacy-at-scale
+Summary of models
+Local model:
+• Use case: Highly sensitive data
+on-device
+• Doesn’t require trusted analyst
+10
+Central model use in practice
+• U.S. Census Bureau used central DP for the 2020 Decennial Census
+• They are Constitutionally mandated to collect information about every
+individual in the U.S. every 10 years
+• Also legally mandated to provide privacy
+• Census Bureau publishes all kinds of reports on the data for various
+use cases
+• Redistricting for House seats
+• Allocating federal funding
+• Monday’s class is about this use-case!
+Central model use in practice
+• LinkedIn uses central DP for reporting most popular news items
+• They have record of every link you clicked on the website
+• Want to report “Top 10 news stories this week” based on these clicks
+• Homework 2 is about this use-case!
+Central model use in practice
+• Uber used central DP as an interface for its employees (so that employees couldn’t
+access the raw data) in response to
+• Lots of bad press about Uber employees using customer data for harmful/
+inappropriate purposes (e.g., https://www.wired.com/insights/2015/01/uber-
+privacy-woes-cautionary-tale)
+• Uber implemented DP for internal analysis to prevent this.
+• Maybe incorrectly? https://github.com/frankmcsherry/blog/blob/master/posts/
+2018-02-25.md
+Summary of models
+Local model:
+• Use case: Highly sensitive data
+on-device
+• Doesn’t require trusted analyst
+• Stronger practical privacy bc
+analyst can’t see raw data
+• Can (mostly) only do learning
+with frequency counts
+Central model:
+• Use case: Entity already has data
+and wants to allow others
+(restricted) access
+• Requires trust in analyst
+• Better accuracy bc analyst can
+coordinate noise added
+• Can do more complicated
+operations
+14
+In-class activity (~15 min)
+In groups of 3-4:
+1. come up with (hypothetical) real-world example use-cases for local
+and central DP
+• These can be real or fictionalized!
+2. 3. Do today’s “in-class activity” quiz (responses can be brief)
+Discuss how to tell whether local or central DP is more appropriate
+for a given use-case
+We will discuss as a class afterwards
+15
+Privacy-accuracy trade-off (in theory)
+max
+𝜆𝑝 𝑢𝑝𝑟𝑖𝑣𝑎𝑐𝑦 (𝜖) + 𝜆𝑎 𝑢𝑎𝑐𝑐𝑢𝑟𝑎𝑐𝑦(𝛼)
+𝜖
+𝑠. 𝑡 . (𝛼, 𝜖) feasibile
+accuracy
+privacy
+Privacy-accuracy trade-off:
+Does it work in practice?
+max
+𝜆𝑝 𝑢𝑝𝑟𝑖𝑣𝑎𝑐𝑦 (𝜖) + 𝜆𝑎 𝑢𝑎𝑐𝑐𝑢𝑟𝑎𝑐𝑦(𝛼)
+𝜖
+𝑠. 𝑡 . (𝛼, 𝜖) feasibile
+accuracy
+• Feasibility: e.g., Laplace Mech
+Pr[𝛼 ≤ ln(1
+𝛽 )∗ (Δ𝑓
+𝜖 )]≥ 1− 𝛽
+• Different mechanisms have different
+guarantees
+• Other parameters appear in the bounds.
+How to incorporate them?
+privacy
+Privacy-accuracy trade-off:
+Does it work in practice?
+max
+𝜆𝑝 𝑢𝑝𝑟𝑖𝑣𝑎𝑐𝑦 (𝜖) + 𝜆𝑎 𝑢𝑎𝑐𝑐𝑢𝑟𝑎𝑐𝑦(𝛼)
+𝜖
+accuracy
+𝑠. 𝑡 . (𝛼, 𝜖) feasibile
+• Utility from accuracy:
+Assume companies know their own
+value for accurate data analysis
+• Does their measure of accuracy match
+the theorem?
+• E.g., advertising revenue vs. Laplace
+accuracy theorem
+privacy
+Privacy-accuracy trade-off:
+Does it work in practice?
+max
+𝜆𝑝 𝑢𝑝𝑟𝑖𝑣𝑎𝑐𝑦 (𝜖) + 𝜆𝑎 𝑢𝑎𝑐𝑐𝑢𝑟𝑎𝑐𝑦(𝛼)
+𝜖
+accuracy
+𝑠. 𝑡 . (𝛼, 𝜖) feasibile
+• Relative value of privacy and
+accuracy:
+• Harder to figure out – both are
+important
+• Possibly hire consultants to do an
+analysis?
+privacy
+Privacy-accuracy trade-off:
+Does it work in practice?
+max
+𝜆𝑝 𝑢𝑝𝑟𝑖𝑣𝑎𝑐𝑦 (𝜖) + 𝜆𝑎 𝑢𝑎𝑐𝑐𝑢𝑟𝑎𝑐𝑦(𝛼)
+𝜖
+accuracy
+𝑠. 𝑡 . (𝛼, 𝜖) feasibile
+• Utility for privacy?
+• Does Google care about user privacy?
+• Does the Census care about privacy?
+• Do people care about privacy?
+• vs. protection against attacks?
+𝜖
+TLDR: complicated in practice,
+no clear answer
+privacy
+Privacy budget management
+In theory:
+1. Pick an algorithm (Laplace, Exponential, RR, etc.)
+2. Analyze accuracy as a function of error
+3. Pick an to balance privacy-accuracy trade-off
+𝜖
+4. The End
+e.g., as we saw for Laplace
+and Exponential Mech
+What if multiple queries?
+Privacy budget management
+In theory:
+1. 2. 4. 5. Pick an algorithm (Laplace, Exponential, RR, etc.)
+Analyze accuracy as a function of error
+3. Pick an to balance privacy-accuracy trade-off
+𝜖
+Repeat steps 1-3 for all relevant queries
+Analyze total privacy loss via composition
+What if privacy loss ends up too large?
+Privacy budget management
+In theory:
+1. Pick 𝝐
+privacy budget to respect privacy needs of the dataset
+2. Collect all queries that need to be answered
+𝜖′
+3. Compute per-query-privacy by reverse engineering composition
+𝜖′
+4. Run each query with the appropriate -DP algorithm
+5. Analyze accuracy of each output as a function of
+𝜖′
+Must halt when privacy budget is exhausted
+What if resulting accuracy isn’t very good?
+What if all queries aren’t known in advance?
+complicated in practice,
+no clear answer
+Real-world challenges with privacy budget
+• You might not know queries (or even number of queries) in advance
+• E.g., data exploration
+• E.g., dataset might have unexpected uses beyond original plan
+• E.g., daily analysis of data. How many days will it run for?
+• Some queries might be more important than others
+• Data might be used by different teams who don’t coordinate
+• What if somebody else uses up all the privacy budget and you can’t analyze
+the data?
+• What if less important team uses up all the privacy budget and critical tasks
+can’t be done?
+Partial solution for privacy budgets
+Done in practice but doesn’t solve the problem
+• Have a privacy budget committee decide who gets what
+• Committee should understand:
+𝜖
+• differential privacy and the role of 𝜖
+, privacy composition, details of privacy-
+accuracy tradeoff as a function of
+𝜖
+• broader goals of organization and how those relate to data analysis tasks, roles
+and relationships of each group that might want to access the data
+• Essentially DP experts and high-level managers
+• When teams want to access the data, apply to the committee for an
+𝜖
+• Should include business use case, type of analysis, number of queries, privacy-
+accuracy analysis, justification of requested
+𝜖
+• Teams must then allocate their budget across analyses
+𝜖• Just offloading the problem onto a committee, not solving it
+(if time) In-class activity
+1. 2. Can you think of any more challenges that would come up when
+picking an epsilon value or allocating an epsilon budget across
+multiple teams?
+Can you think of any better solutions than just hiring consultants or
+forming a committee?
+Both of these just make it someone else’s problem, rather than solving it
+Today’s Homework
+On CourseWorks:
+• Discussion post about practical use of DP
+• Quiz about picking epsilon
+• Read Census case study and come to class prepared to discuss!
+• Homework assignment 2 (part 1a) is posted
+• due Tuesday Feb 25 at 11:59pm
+• This is a longer assignment, so posted in advance
+• We’ll discuss in class on Wednesday
+Questions?
+Differential privacy:
+2020 Decennial Census
+Agenda:
+1. The Census and its
+privacy mandate
+2. Old (bad) solution
+3. Discuss the reading
+
+Feb. 24, 2025
+What is the Census?
+• Article 1, Section 2 of the U.S. Constitution:
+• “Representatives and direct Taxes shall be apportioned among the
+several States which may be included within this Union, according to
+their respective Numbers […] The actual Enumeration shall be made
+within three Years after the first Meeting of the Congress of the
+United States, and within every subsequent Term of ten Years, in
+such Manner as they shall by Law direct.”
+• TLDR: Congress has to count people every 10 years. This count is used
+to allocate tax revenues and House seats
+HUGE drama
+Why does privacy matter?
+• U.S. Law requires it – 13 U.S.C. §9(a)(2):
+• “Neither the Secretary, nor any other officer or employee of
+the Department of Commerce or bureau or agency thereof, or local
+government census liaison, may […] make any publication whereby
+the data furnished by any particular establishment or individual
+under this title can be identified.”
+• TLDR: Census data must not be personally identifiable
+What do they publish?
+• All kinds of stuff. Lots of tables and statistics for allocating tax dollars
+(e.g., Medicaid, Head Start, SNAP, …)
+• The Census Bureau also does lots of other surveys and analyses in
+between the Decennial Census (e.g., American Communities Survey)
+• We will focus on the dataset used for redistricting: PL 94-171
+• Big histogram containing location, race, and ethnicity
+• Actually two histograms, one with everyone and one with only voting age
+population. Can ignore for now…
+PL 94-171
+• Race: White, Black, American Indian, Asian, Native Hawaiian/Pacific Islander, and
+Some Other Race.
+• Can choose multiple, but have to pick at least 1
+• 26 – 1 = 63 races
+• Ethnicity: binary Hispanic/Latino or not
+• Location in hierarchical geography: nation, state, county, tract, block group, block
+• ~11M census blocks, each with ~100 people
+• Many of these blocks are designed to be empty, e.g., in the middle of a lake or a freeway
+• At its finest (block-level) granularity, ~100 people are split into 2*63 buckets
+• Most buckets will have extremely small counts
+• Users are unique and data are sparse
+Old privacy solution: swapping
+• Exchange of data about individuals
+between groups, in order to de-identify
+• Swap selection can be random or based
+upon a threshold of similarity
+• swap rate: proportion of data to be
+swapped
+• Used until 2010
+• “Privacy” = never tell anyone what you
+swapped
+• Hard to analyze accuracy or privacy
+New York
+County
+Westchester
+County
+Image credit: Miranda Christ and Sarah Radway
+6
+Swapping doesn’t work
+• Census Bureau performed Dinur-Nissim attack (from Lecture 4) on the
+2010 Decennial Census PL 94-171 to reconstruct the microdata
+• Recall DN ‘03 punchline: Answering too many queries too accurately leads to blatant
+privacy violation
+• PL 94-171 has ~12B queries, or roughly 25 queries per person
+• 46% of reconstructed records exactly matched Census internal data
+• 71% of reconstructed records matched with age +/- 1 year
+• 45% of reconstructed records could be linked to commercial data sets that
+had name, address, etc.
+• 39% of those exactly matched Census records with name, address, etc
+• This last step is to ensure that linkage attack is to correct data
+• Successful re-identification of 52M people or 17% of the population
+In-class activity (~30 min)
+See document on CourseWorks for today’s In-class activity
+Afterwards we’ll discuss as a class
+DP Attempt 1
+• Add noise to every bucket of histogram independently at all levels
+• E.g., All counts for race x ethnicity x age x geographical region
+• Laplace Mechanism for 6 histograms, one for each location hierarchy
+• nation – state – county – tract – block group – block
+• Pro: Only do composition over 6 histograms, so good privacy
+• Pro: Only add one noise term to each count, so good accuracy
+• Con: Doesn’t respect invariant of hierarchical consistency
+• Since we add noise independently at each location level, county numbers will
+not sum to state numbers (and so on)
+DP Attempt 2
+• Add noise to every bucket of histogram at block level
+• E.g., All counts for race x ethnicity x age x census block
+• To get hierarchical counts, just add up numbers in buckets below
+• E.g., state count is sum of county counts
+• Pro: Respects invariant of hierarchical consistency (by construction!)
+• Pro: Only 1 histogram, so good accuracy (i.e., no composition)
+• Con: Higher geographical levels are sums of SO MANY noisy counts,
+so terrible accuracy
+TopDown algorithm
+• Rather than “bottom up” approach of adding noise to leaves and
+aggregating, we will add take “top down” approach of adding noise at
+the national level
+• To get privacy, accuracy, and respect invariants, need to solve
+everything together in collective optimization problem
+• TopDown algorithm:
+• Start by adding noise at national level
+• For each lower level, solve constrained optimization problem to “split” noise
+across bins for three desiderata
+• VERY VERY large optimization problem – can use commercial solvers
+Slide taken from John Abowd’s presentation
+“Staring-Down the Database Reconstruction Theorem”
+Slide taken from John Abowd’s presentation
+“Staring-Down the Database Reconstruction Theorem”
+Slide taken from John Abowd’s presentation
+“Staring-Down the Database Reconstruction Theorem”
+Slide taken from John Abowd’s presentation
+“Staring-Down the Database Reconstruction Theorem”
+Slide taken from John Abowd’s presentation
+“Staring-Down the Database Reconstruction Theorem”
+Slide taken from John Abowd’s presentation
+“Staring-Down the Database Reconstruction Theorem”
+Questions?
+Synthetic Data as a Privacy
+Technology
+Agenda:
+1. Definition, benefits,
+challenges
+
+Mar. 5, 2025
+Stop-Start-Continue
+• People generally like case studies, discussions in class, breakout group
+discussions in class
+• Will continue all of these
+• Disagreement about time spent in full-class discussion vs. breakout
+groups
+• Feedback from class?
+• People wanted to see more technical detail of privacy technologies
+• Sadly, not what this class focuses on
+• Make things due at 11:59pm instead of 10pm
+• Will change this
+2
+Answering queries on database
+Database
+q1
+a1
+q2
+a2
+.
+.
+.
+ℎ
+Goal: Output hypothesis that is consistent with the database
+Generating synthetic data
+Database
+q1
+a1
+q2
+a2
+.
+.
+.
+Goal: Output synthetic database that shares the same statistical
+properties with the original database
+Synthetic data
+• Synthetic data is a new dataset created as a function of the original
+data
+• When you ask queries of the synthetic data, it should give you
+“similar” answers to the answer on the true dataset
+Example:
+0
+1
+0
+1
+0
+0
+1
+f(X) = fraction of 1s in dataset X
+f( ) = 4/7 ≈ 0.57
+f( ) = 0.50
+0
+1
+1
+1
+5
+Why synthetic data?
+• Practitioners are used to working with data!
+• Current workflow can be unchanged
+• May not trust specialized privacy tools (e.g., DP mechanisms)
+• Allows many types of analyses
+• Unlimited number of computations on dataset (i.e., no privacy
+budget)
+• No interaction required between analyst and privacy expert
+• Sometimes required by law (e.g., Census Bureau)
+6
+Challenges with synthetic data
+• How to measure accuracy of synthetic data?
+• Unlike a single query, notion of “accuracy” is high-dimensional and non-obvious
+• Practitioners need to understand that synthetic data is not ground truth
+• No one-to-one mapping between individuals in the original data and synthetic data
+• Many of the “sanity-checks” in data cleaning can’t be done b/c properties hold only
+in aggregate, not for the individual entries
+• May only be accurate on some queries
+• Accuracy guarantees are approximate (like in earlier example)
+• Is it private?
+• How to generate synthetic data?
+7
+Is it private?
+• Not automatically!
+• E.g., k-anonymizing the dataset would result in a “new” dataset where all the
+same queries can be answered
+• It can help reduce obvious/easy privacy breaches, but does not de
+facto ensure privacy
+• The algorithm used to generate synthetic data (as a function of the real data)
+may leak information
+• The synthetic dataset itself may leak information
+• Can be paired with other privacy technologies
+• E.g., differentially private algorithms for generating synthetic data
+8
+Using Exponential Mech for synth data
+Takes very long time
+• SmallDB algorithm [BLR ‘08] takes in database 𝑥 of size 𝑛 and set of queries 𝐹
+• Outputs smaller database 𝑦 that can be used to (approximately) correctly
+answer all the queries in 𝐹
+• Uses Exponential Mechanism to sample a database
+SmallDB(𝑥, 𝐹, 𝜖)
+1. Enumerate all databases of desired size
+2. Assign quality score 𝑞 𝑥, 𝑧, 𝐹 = −max
+𝑓∈𝐹 |𝑓 𝑥 − 𝑓 𝑧 | to each small
+database 𝑧
+3. Output 𝑦 sampled w.p. ∝ exp
+𝜖 𝑞 𝑦,𝐹,𝑥
+2Δ𝑞
+Pros: differentially private, formal accuracy guarantees
+Cons: takes exponential time, accuracy only for pre-specified query class
+9
+quality score is error on worst query
+Private GANs
+• Generative Adversarial Networks (GANs) are two competing neural
+networks: Generator and Discriminator
+• Generator generates synthetic data
+• Discriminator is given data and decides whether it is from Generator or
+is real data
+10
+Private GANs
+• Generator and Discriminator are typically trained via deep learning
+techniques like stochastic gradient descent (SGD)
+• Publish Generator after training, which can be used to generate arbitrary
+amounts of new synthetic data
+• Can be used as-is without other privacy tools but risks memorizing things
+about the dataset, and leaking data
+• E.g., GPT-4 produced a full page of Harry Potter
+• Can also substitute DP versions of training algorithms (e.g., DP-SGD instead
+of regular SGD) and will immediately be DP by post-processing
+Pros: queries don’t need to be pre-specified, easy to share trained model, can
+generate arbitrary amounts of data
+Cons: no formal accuracy guarantees, slow to train, black box
+11
+Application to medical data [BWWLBBG ‘19]
+• Applied Differentially Private GANs to
+medical context
+• Trained on Systolic Blood Pressure
+Intervention Trial dataset
+• Generated synthetic blood pressure data
+• Showed minimal accuracy loss from
+privacy
+• Published in medical journal
+12
+In-class activity
+In groups of 2-3:
+• Discuss benefits of using synthetic data as a privacy method and one
+challenge for using it in practice
+• Quiz on Courseworks to summarize discussion
+• ~1 sentence for each benefit/challenge
+• We’ll discuss as a class afterwards
+13
+Today’s Homework
+On CourseWorks:
+• Continue working on HW 2 part 2 (due Mar 9 at 11:59pm)
+• Begin thinking about a group and topic for the final project
+Final project
+(posted on Courseworks)
+Any questions?
+15
+Questions?
+Cryptography:
+Introduction and private-key crypto
+Agenda:
+1. Intro to cryptography
+2. Private-key crypto
+3. Security definitions
+
+Mar. 10, 2025
+Topic 3: Cryptography
+m0
+Enc(m0)
+should be nearly indistinguishable
+m1
+Enc(m1)
+m0
+m1
+Why is cryptography a policy issue?
+• “Cryptography rearranges power: it configures who can do what, from
+what. This makes cryptography an inherently political tool, and it
+confers on the field an intrinsically moral dimension.”
+-- Phil Rogaway, “The Moral Character of Cryptographic Work,” 2015
+3
+Why is cryptography a policy issue?
+“Senator, we run ads.”
+“No, we don't see any of the content in
+WhatsApp, it's fully encrypted.”
+4
+Policy questions are different from DP
+Differential Privacy
+• New technology (2006)
+• New challenges in regulation and
+practical use
+• Key idea: add noise to hide
+information of individual
+• Key issue: privacy-accuracy
+tradeoff
+• Key Takeaway: DP is great for
+aggregate analysis not good for
+individual analysis.
+Cryptography
+• Been around a long time (1980s)
+• Existing regulations but new
+technical advances/novelty
+• Key idea: “mask” true information
+with something removable later
+• Key issue: Computational
+challenges
+• Key Takeaway: Encrypted
+communication ensures that only
+the intended parties can see the
+communication.
+5
+Private-key cryptography
+Basic setup: Alice wants to communicate a secret message to Bob,
+doesn’t want anyone else to see message
+Enc(m)
+m Dec(Enc(m)) =m
+Eva
+Alice Bob
+Alice encrypts her message before sending it, using function Enc
+Bob decrypts the encrypted message, using function Dec
+Message m is plaintext and encrypted message c is ciphertext
+6
+The key?
+Cryptography also requires keys
+Enck(m)
+m Deck(Enck(m)) =m
+Eva
+Alice Bob
+𝐸𝑛𝑐 and 𝐷𝑒𝑐 require a second input: a private key known by both Alice
+and Bob but no one else (it’s private to them)
+7
+Private-key encryption
+A private-key encryption scheme is defined by a message space 𝑀 and
+three algorithms:
+• 𝐺𝑒𝑛 is a probabilistic algorithm that outputs a key 𝑘 according to some
+distribution over the keyspace 𝐾
+• 𝐸𝑛𝑐 takes as input a key 𝑘 and a message 𝑚, and outputs a ciphertext 𝑐
+• 𝐸𝑛𝑐𝑘 𝑚 = 𝑐
+• 𝐷𝑒𝑐 takes as input a key 𝑘 and a ciphertext 𝑐, and outputs a message 𝑚
+• 𝐷𝑒𝑐𝑘 𝑐 = 𝑚
+8
+What is secret?
+• Kerchoff’s principle: The details of the encryption scheme are not
+secret
+• The key is!
+• Can publish (𝐺𝑒𝑛, 𝐸𝑛𝑐, 𝐷𝑒𝑐), just don’t publish 𝑘
+• Good for transparency, red teaming, etc.
+• Similar to DP: Can publish that you’re using Laplace Mechanism and
+the 𝜖 used, just don’t publish the value of your Laplace noise
+9
+Desiderata of encryption scheme
+1. Correctness: 𝐷𝑒𝑐𝑘 𝐸𝑛𝑐𝑘 𝑚 = 𝑚
+Bob can accurately decrypt the message sent to him
+2. Security: Ciphertext 𝑐 should leak nothing about 𝑚 that the
+attacker didn’t already know
+No one else can accurately decrypt the message
+Eavesdropper Eva can see 𝑐, transmitted over the internet. Don’t want
+her to make meaningful inferences about 𝑚
+Vague, we will
+make formal
+10
+Security
+• “Without knowledge of Alice’s key 𝑘, Eva cannot guess 𝑚”
+• Not the same as: 𝐷𝑒𝑐𝑘′ 𝐸𝑛𝑐 𝑘 ≠ 𝑚
+• E.g., 𝐷𝑒𝑐 always produces 𝑚 regardless of ciphertext and key: perfectly
+secure (but Bob can’t decrypt)
+• If the keyspace 𝐾 is small, Eva can just try them all
+• Brute-force attack
+• Need 𝐾 to be very large so that this attack is infeasible
+11
+Example – Caesar cipher
+• Julius Caesar would “encrypt” personal communications by shifting
+every letter 3 to the right
+• A-->D, B-->E, C-->F, etc.
+• Worked surprisingly well in his lifetime
+• More general encryption scheme: shift 𝑘 letters to the right
+• 𝐸𝑛𝑐𝑘 𝑚 : shift every letter of 𝑚 𝑘 to the right
+• 𝐷𝑒𝑐𝑘 𝑐 : shift every letter of 𝑐 𝑘 to the left
+• 𝐷𝑒𝑐𝑘 𝐸𝑛𝑐𝑘 𝑚 = 𝑚 ☺
+• 𝐺𝑒𝑛(𝐾): pick a number between 1 and 26 uniformly at random
+• 𝐾 = 26, so easy to just try them all 
+• Can also guess based on frequencies of letters, etc. 
+12
+In-class activity (5 min)
+• In groups of three, try communicating with the Caesar cipher
+• One person is Alice, one is Bob, one is Eva
+• Alice and Bob have to agree on a secret key first
+• First try to encrypt a single letter. How well can Eva guess?
+• Then try to encrypt a full word. Can Eva guess?
+13
+Eavesdropping indistinguishability experiment
+𝑃𝑟𝑖𝐾 𝐴,Π
+𝑒𝑎𝑣:
+1. Adversary selects a pair of messages 𝑚0, 𝑚1 ∈ 𝑀
+2. A random key 𝑘 is generated with 𝐺𝑒𝑛, and a random bit 𝑏 ∈ {0,1}
+is chosen
+3. Ciphertext 𝑐 ← 𝐸𝑛𝑐𝑘 𝑚𝑏 is given to 𝐴
+4. 5. 𝐴 outputs a bit 𝑏′ that is a guess of 𝑏
+The outcome of the experiment is:
+𝑃𝑟𝑖𝐾 𝐴,Π
+𝑒𝑎𝑣 = ቊ1 if 𝑏′
+= 𝑏 0 if 𝑏′ ≠ 𝑏 (i. e. , adversary succeeded)
+(i. e. , adversary failed)
+How? Any way they want! Trying
+all the values in 𝐾, exploiting
+vulnerabilities in 𝐸𝑛𝑐, etc.
+14
+Defining success of adversary
+• Since 𝑏 was chosen randomly, adversary can always succeed with
+probability ½ just by guessing randomly.
+• Success probability ½ is baseline (no advantage)
+• Can they do better?
+• Def: An encryption scheme (𝐺𝑒𝑛, 𝐸𝑛𝑐, 𝐷𝑒𝑐) over message space 𝑀 is
+perfectly secret if for any adversary 𝐴, Pr 𝑃𝑟𝑖𝐾 𝐴,Π
+𝑒𝑎𝑣 = 1 =
+• Adversary can do no better than random guessing (no matter what they do)
+• Ciphertext leaks no information about the plaintext
+• The two are perfectly independent
+1
+2
+15
+Example – One-time pad
+• XOR is the “exclusive OR” of two bits -- i.e., exactly one of them is 1
+• 0 ⊕ 0 = 0
+• 0 ⊕ 1 = 1
+• 1 ⊕ 0 = 1
+• 1 ⊕ 1 = 0
+• XOR of bitstring is bit-wise XOR
+0011 1101
+⊕ 1110 ⊕ 1110
+1101 0011
+• Note that applying an XOR twice in a row will undo itself
+16
+Example – One-time pad
+One-time pad generates a uniformly random key 𝑘 ∈ 0,1 ℓ = 𝐾 for a
+message 𝑚 ∈ 0,1 ℓ = 𝑀
+• 𝐸𝑛𝑐𝑘 𝑚 = 𝑘 ⊕ 𝑚
+• 𝐷𝑒𝑐𝑘 𝑐 = 𝑘 ⊕ 𝑐
+• 𝐷𝑒𝑐𝑘 𝐸𝑛𝑐𝑘 𝑚 = 𝑚 ☺
+• Because we XOR 𝑚 with a uniformly random bitstring, 𝐸𝑛𝑐𝑘 𝑚 is
+perfectly independent of 𝑚
+• Try to convince yourself for ℓ = 1: XOR will flip the bit w.p. ½
+• Perfectly secret! ☺
+17
+In-class activity (15 min)
+• In pairs, eavesdropping experiment
+• One person is adversary, one generates ciphertext
+• Use either Caesar cipher (not secure) or one-time pad (secure)
+• Answer Courseworks quiz about your experience
+• Could the adversary guess? Did you feel the message was secure?
+18
+Perfect secrecy is impractical
+• Perfect secrecy is ideal but impractical (like 𝜖 = 0 in DP)
+• One-time pad requires key length same as message length
+• E.g., sending an email…very long key
+• Perfect secrecy requires key at least as long as the message
+• One-time pad is best you can do
+• Generating randomness is “expensive”
+• DP: tradeoff between privacy and accuracy
+• Crypto: tradeoff between security and computational efficiency
+19
+Computational secrecy
+Relax perfect secrecy in two ways:
+1. Strength of the adversary
+2. Success probability
+20
+The adversary
+?
+?
+Consider computationally efficient adversaries that are using probabilistic
+(i.e., randomized) algorithms that run in time polynomial in 𝑛.
+These are called Probabilistic Polynomial Time (PPT) adversaries.
+• Polynomial: any polynomial function of 𝑛
+• YES: 𝑛2
+, 5𝑛17 + 0.2𝑛
+• NO: 𝑒𝑛
+, log 𝑛
+• What is n? 𝑛 is part of the encryption scheme, and it is the security parameter
+Idea: If an adversary can break your scheme, but it would take ~200
+years using all the GPUs in the world, you’re not actually worried about
+this. Only worried about “practical” or “efficient” adversaries.
+21
+Success probability
+• Don’t want the adversary to succeed in 𝑃𝑟𝑖𝐾 𝐴,Π
+𝑒𝑎𝑣 with probability
+“much more than ½”
+• Formally, want the additional success probability to be negligible in 𝑛
+• A negligible function is smaller than any inverse polynomial
+• 𝑛𝑒𝑔𝑙 𝑛 is smaller than 1
+𝑛𝑎 for any constant 𝑎
+1
+• YES: 𝑒−𝑛
+,
+1
+• NO: 𝑛2
+,
+𝑛log 𝑛
+1
+,
+𝑛
+𝑛2
+22
+Computational secrecy
+Relax perfect secrecy in two ways:
+1. 2. Strength of the adversary – PPT adversary instead of any adversary
+Success probability – negligible advantage over random guessing
+23
+Computational security
+A computationally secure private-key encryption scheme consists of
+three algorithms (𝐺𝑒𝑛, 𝐸𝑛𝑐, 𝐷𝑒𝑐), security parameter 𝑛, keyspace 𝐾,
+message space 𝑀, and it should satisfy:
+1. Correctness: 𝐷𝑒𝑐𝑘 𝐸𝑛𝑐𝑘 𝑚 = 𝑚
+Bob can accurately decrypt the message sent to him
+2. Security: For any PPT adversary 𝐴, Pr 𝑃𝑟𝑖𝐾 𝐴,Π
+𝑒𝑎𝑣 = 1 ≤ 1
++ 𝑛𝑒𝑔𝑙 𝑛
+2
+Adversary can successfully guess the message from the ciphertext
+24
+DP vs crypto in policy
+• Arguments that DP is difficult to regulate because too many
+parameters, too much math, hard to reason about, etc.
+• General perception that cryptography is “easy” to regulate: things are
+either encrypted or not.
+• E.g., https with lock icon or http without
+• As we see, cryptography is just as mathematical, hard to explain, lots
+of parameters, etc. Had a few decades head start in terms of
+explainability, marketing to the general public, establishing best
+practices, etc.
+• Hope for DP as it matures as a field that it will become what crypto is
+today
+25
+Today’s Homework
+None! Good luck on midterms ☺
+Questions?
+Cryptography:
+Public-key crypto
+Agenda:
+1. Finish private-key
+crypto from last time
+2. Public-key crypto
+
+Mar. 12, 2025
+Private-key cryptography
+Metaphor: key is like a shared
+physical key, can be used to
+lock/unlock the same box
+Enck(m)
+m Deck(Enck(m)) =m
+Eva
+Alice Bob
+Alice and Bob both have to know the key before the can communicate.
+How do they get the key in the first place?
+2
+Public-key cryptography
+• In public-key cryptosystems, keys can (and should be!) publicly shared
+• Keys will also play a different technical role
+• Otherwise no security
+Email
+signature
+3
+Public-key encryption
+For Alice to send a message to Bob:
+1. Bob generates a pair of keys using
+(𝑠𝑘, 𝑝𝑘) 𝐺𝑒𝑛
+𝑝𝑘
+= public key
+𝑠𝑘
+= secret key
+2. Alice encrypts her message using Bob’s public key
+𝐸𝑛𝑐𝑝𝑘(𝑚) = 𝑐
+3. Bob decrypts the ciphertext using his secret key
+𝐷𝑒𝑐𝑠𝑘(𝑐) = 𝑚
+Metaphor: public key is like a lock that can only be
+unlocked by the correct secret key
+4
+Public-key encryption
+pk
+sk
+pk
+Encpk(m) Dec
+Alice
+m
+Enc
+m
+Alice’s computer Bob’s computer
+Gen
+sk
+Decsk(Encpk(m))=m
+Bob
+m
+5
+Example encryption scheme
+• Public key
+• Private key
+(𝑛, 𝑎)
+𝑏
+• Message
+𝑚
+•
+𝐸𝑛𝑐𝑛,𝑎(𝑚) = 𝑚𝑎(𝑚𝑜𝑑 𝑛)
+•
+𝐷𝑒𝑐𝑛,𝑏(𝑐) = 𝑐𝑑(𝑚𝑜𝑑 𝑛)
+•
+𝐷𝑒𝑐𝑛,𝑏𝐸𝑛𝑐𝑛,𝑎(𝑚) = (𝑚𝑎)𝑏
+= 𝑚
+Why? Key generation!
+6
+Example key generation
+• Choose prime numbers
+𝑝, 𝑞
+• Set
+𝑛 = 𝑝⋅ 𝑞
+𝑎 1 < 𝑎 < 𝑛 𝑎, 𝑛
+• Choose such that and co-prime (i.e., share no
+common factors)
+• Choose
+𝑏= 𝑎−1 (𝑚𝑜𝑑 𝑛)
+• is asking for the remainder when is divided by
+𝑥 (𝑚𝑜𝑑 𝑛) 𝑥 𝑛
+• is asking for the number such that
+𝑥−1 (𝑚𝑜𝑑 𝑛) 𝑦 𝑥 ∗ 𝑦 (𝑚𝑜𝑑 𝑛) = 1
+• Such an inverse is always guaranteed to exist
+7
+Example key generation
+• Choose prime numbers
+𝑝 = 2, 𝑞 = 3
+• Set
+𝑛 = 𝑝⋅ 𝑞 = 6
+𝑎 = 5 1 < 𝑎 < 𝑛 𝑎, 𝑛
+• Choose such that and co-prime (i.e., share no
+common factors)
+• Choose
+𝑏= 𝑎−1 (𝑚𝑜𝑑 𝑛) = 5−1(𝑚𝑜𝑑 6)= 5
+•
+5 ∗ 1 (𝑚𝑜𝑑 6)= 5 (𝑚𝑜𝑑 6)= 5
+•
+5 ∗ 2 (𝑚𝑜𝑑 6)= 10 (𝑚𝑜𝑑 6)= 4
+•
+5 ∗ 3 (𝑚𝑜𝑑 6)= 15 (𝑚𝑜𝑑 6)= 3
+•
+5 ∗ 4 (𝑚𝑜𝑑 6)= 20 (𝑚𝑜𝑑 6)= 2
+•
+5 ∗ 5 (𝑚𝑜𝑑 6)= 25 (𝑚𝑜𝑑 6)= 1
+8
+Example encryption scheme
+• Public key
+(𝑛, 𝑎) = (6,5)
+This is a (slightly) incorrect version of RSA, which is the most
+widely used public-key encryption scheme today.
+In practice, you would want p,q to be thousands of digits long
+• Private key
+𝑏= 5
+• Message
+𝑚 = 3
+•
+𝐸𝑛𝑐𝑛,𝑎(𝑚) = 𝑚𝑎(𝑚𝑜𝑑 𝑛) = 35(𝑚𝑜𝑑 6)= 243 (𝑚𝑜𝑑 6)= 3
+•
+𝐷𝑒𝑐𝑛,𝑏(𝑐) = 𝑐𝑑(𝑚𝑜𝑑 𝑛) = 35 (𝑚𝑜𝑑 6)= 243 (𝑚𝑜𝑑 6)= 3
+•
+𝐷𝑒𝑐𝑛,𝑏𝐸𝑛𝑐𝑛,𝑎(𝑚) = (𝑚𝑎)𝑏
+= 𝑚
+Key insight: It’s easy to multiply numbers (encryption, or decryption w/secret
+key), hard to factor large numbers (decryption without the secret key)
+9
+In-class activity (~15 min)
+• In groups of 2, use the 𝐺𝑒𝑛
+algorithm on the previous slide to
+generate a key pair.
+(𝑝𝑘, 𝑠𝑘)
+• Note: you don’t actually need two people for this, but it’s tricky so better to
+have a buddy
+• Then you’ll be paired with another group of 2 to practice public-key
+encrypted communication
+• One pair plays role of Alice and other pair is Bob
+• Then swap roles
+• Quiz on Courseworks about your experience
+10
+Public-key encryption scheme
+A public-key encryption scheme Π
+consists of a three algorithms, a message
+𝑀 𝐾 𝑛
+space , keyspace , and a security parameter :
+• is a probabilistic algorithm that outputs a key pair 𝐺𝑒𝑛 (𝑝𝑘, 𝑠𝑘)
+according to
+some distribution over the keyspace
+𝐾
+• takes as input a public key and a message 𝐸𝑛𝑐 𝑝𝑘 𝑚
+, and outputs a
+ciphertext
+𝑐
+•
+𝐸𝑛𝑐𝑝𝑘(𝑚) = 𝑐
+• takes as input a secret key 𝐷𝑒𝑐 𝑠𝑘 𝑐
+and a ciphertext , and outputs a
+message
+𝑚
+•
+𝐷𝑒𝑐𝑠𝑘(𝑐) = 𝑚
+11
+Computational security
+Given a public-key encryption scheme Π = (𝐺𝑒𝑛, 𝐸𝑛𝑐, 𝐷𝑒𝑐)
+, security
+𝑛 𝐾 𝑀
+parameter , keyspace , message space , we want:
+1. Correctness: for
+𝐷𝑒𝑐𝑠𝑘(𝐸𝑛𝑐𝑝𝑘(𝑚))= 𝑚 (𝑝𝑘, 𝑠𝑘)← 𝐺𝑒𝑛(𝑛)
+Bob can accurately decrypt the message intended for him
+Define analogous eavesdropping
+experiment, where the adversary
+has the public key
+1
+𝐴
+2. Security: For any PPT adversary ,
+Pr[𝑃 𝑢𝑏𝐾𝑒𝑎𝑣
+𝐴,Π(𝑛) = 1]≤
++ 𝑛𝑒𝑔𝑙(𝑛)
+Adversary can’t successfully guess the message from the ciphertext
+12
+2
+Eavesdropping indistinguishability experiment
+𝑃 𝑢𝑏𝐾𝑒𝑎𝑣
+:
+𝐴,Π
+1. Adversary selects a pair of messages
+𝑚0, 𝑚1 ∈ 𝑀
+2. A random key pair is generated with , and a random bit
+(𝑝𝑘, 𝑠𝑘) 𝐺𝑒𝑛 𝑏 ∈ {0,1}
+is chosen
+3. Ciphertext and the public key are given to
+𝑐 ← 𝐸𝑛𝑐𝑝𝑘(𝑚𝑏) 𝑝𝑘 𝐴
+𝐴 𝑏′ 𝑏
+4. outputs a bit that is a guess of
+5. The outcome of the experiment is:
+𝑃 𝑢𝑏𝐾𝑒𝑎𝑣
+𝐴,Π = {1 if 𝑏′
+= 𝑏 (i . e . , adversary succeeded)
+0 if 𝑏′ ≠ 𝑏 (i . e . , adversary failed)
+13
+Today’s Homework
+On Courseworks:
+• Technical assignment about private- and public-key encryption
+schemes
+• Feel free to use your notes / the slides as a reference during the quiz
+• Due after Spring Break
+• Muddiest Point
+• Due Sunday (before spring break)
+Questions?
+Secure Multi-Party Computation
+(MPC)
+Agenda:
+1. Computing using MPC
+2. Types of adversaries
+
+Mar. 26, 2025
+Slide credit: Mayank Varia, Shafi Goldwasser, Ran Canetti
+An illustrative example…
+Goal 3: Evaluating Success
+Employers agree to … contribute data to
+a report compiled by a third party on the
+Compact’s success to date. Employer-
+level data would not be identified in the
+report.
+Workflow
+Trust spectrum
+Trust us Trust no one
+Trust anyone
+Give someone
+all your data
+Secure MPC
+FHE
+How it works
+$9
+$7
+How it works
+$9
+$7
+=
+=
+10
+4
++
++
+11
+3
+How it works
+11
+10
+– –
+4 3
+8
+6
+How it works
+$9
+–
+$7
+$2
+11
+–
+8
+6
+3
+Structure of the MPC protocol
+1. Secret Share inputs among all participants
+2. Compute on the shares received
+3. Reconstruct the output
+Addition
+a
+b
+= =
+Computing servers
+a1
+b1
++ +
+a2
+b2
+Split secrets from
+data contributors
+y1 = b1 + a1
+y2 = b2 + a2
+Compute over
+secret shares
+y = y1 + y2
+= b + a
+Reconstruct the
+final answer
+Subtraction
+a
+b
+= =
+Computing servers
+a1
+b1
+y1 = b1 - a1
++ +
+y = y1 + y2
+= b - a
+a2
+b2
+y2 = b2 – a2
+Split secrets from
+data contributors
+Compute over
+secret shares
+Reconstruct the
+final answer
+Adding a constant
+a
+Computing servers
+a1
+c
+(randomly)
+a2
+c
+Split secrets from
+data contributors
+y1 = a1 + c
+y = y1 + y2
+= a + c
+y2 = a2
+Compute over
+secret shares
+Reconstruct the
+final answer
+Scalar multiplication
+a
+Computing servers
+a1
+c
+y1 = c * a1
+y = y1 + y2
+= c * a
+a2
+c
+y2 = c * a2
+Split secrets from
+data contributors
+Compute over
+secret shares
+Reconstruct the
+final answer
+Multiplying two secrets?
+w
+x
+Computing servers
+P1
+= =
+w1
+x1
+y1 = ???
++ +
+y = y1 + y2
+= w * x
+w2
+x2
+y2 = ???
+P2
+Split secrets from
+data contributors
+Compute over
+secret shares
+Reconstruct the
+final answer
+Multiplying two secrets w/help
+w
+x
+y = de + db + ea + c
+= (d + a) * (e + b)
+= (w + a – a) * (x + b – b)
+= w * x
+Computing servers
+P1
+= =
+w1
+x1
+a1 b1 c1
++ +
+w2
+x2
+a2 b2 c2
+P2
+Split secrets … and
+random a, b, c with a * b = c
+[d] = [w] – [a]
+[e] = [x] – [b]
+reconstruct d, e
+[y] = de + d[b] + e[a] + [c]
+Compute over secret shares
+and reconstruct answers
+Multiplying two secrets w/help
+w
+x
+P3
+y = de + db + ea + c
+= (d + a) * (e + b)
+= (w + a – a) * (x + b – b)
+= w * x
+Computing servers
+P1
+= =
+w1
+x1
+a1 b1 c1
++ +
+w2
+x2
+a2 b2 c2
+P2
+Split secrets … and
+random a, b, c with a * b = c
+[d] = [w] – [a]
+[e] = [x] – [b]
+reconstruct d, e
+[y] = de + d[b] + e[a] + [c]
+Compute over secret shares
+and reconstruct answers
+In-class activity (~15 min)
+• In pairs or groups, practice performing 2-server MPC computations
+• addition, subtraction, adding a constant, scalar multiplication
+• multiplication if you want a challenge!
+• If pairs: each person is a server
+• If groups:
+• pairs can each play a server so you have a buddy in your secret sharing
+• or you can try to see how each operations work with 3 servers
+At the end: Courseworks quiz about your experience
+Types of adversaries
+Honest but curious (Eve/Eavesdropper): Follows the protocol and tries
+to learn along the way
+Malicious (Mallory): May deviate from the protocol
+So far we have only been considering Eve…
+Security against Eve/Mallory
+• Claim: if all three servers follow the protocol, no server learns any
+data
+• P1 and P2 each hold 1 share of each secret, appears perfectly random
+• P3 never receives any information in the entire protocol
+• “Three servers can keep a secret if all of them don’t know what it is.”
+–Prof. Andrew Miller, UIUC
+• However, protocol is unsafe if one server is an active Mallory
+• Bad: If Mallory = P1, she can tamper with the output. Calculating a bad share
+y1’ = y1 + 1 causes a corresponding change to the hidden value y’ = y + 1
+• Worse: Some protocols that are only secure against Eve might permit Mallory
+to learn secrets as well
+Secure Multi-Party Computation
+Data2
+Yao82
+Goldreich-Micali-
+Wigderson 86
+Benor-Goldwasser-
+Wigderson 87
+Data1
+Data3
+Data5
+Data4
+Universal Theorem: There exists a secure protocol for n
+parties to compute any polynomial time function f
+Under some conditions about no more than t-out-of-n
+people colluding.
+Conditions (even against Mallory!)
+Assuming 2/3 honest majority and secure encryption
+Assuming 1/2 honest majority and secure encryption and a broadcast
+channel: can post a message that all can seen.
+Not assuming any honest majority and heavier crypto machinery that
+we won’t cover in this class
+To protect against Mallory, you need to add extra servers for
+redundancy who will check each other’s work
+Some deployments of MPC in practice
+Cybernetica: VAT tax audits BU: Pay equity in Boston
+Partisia: Rate credit of farmers
+Google: Federated machine learning
+Unbound: Protect cryptographic keys
+Today’s Homework
+• Reminder Final Project proposal due tonight at 11:59pm
+• Homework 3 Part 1 will be posted tonight/tomorrow
+• It’s about MPC and BWWC!
+• Due Tuesday 4/1 at 11:59pm
+Questions?
+Federated Learning:
+
+Apr. 7, 2025
+Agenda:
+1. Introduction federated
+learning
+2. Privacy guarantees
+3. Integrating FL with DP
+and crypto
+Administrative updates
+• Final project reminder
+• Final exam planning
+• Any other other questions/discussion?
+Idealized Learning
+Analyst wants to compute on data held in a distributed way by its users
+x1
+f(x)
+x2
+x3
+Users don’t want to send data directly! How can
+we do the same task without sharing data?
+Key features of Federated Learning
+• Global computation performed on lots of users’ data
+• Each user holds their own data
+• Computation happens “on device” rather than sending data to central
+server
+• How is this possible? Model updates!
+Central model, federated updates
+• Running example: predicting emoji usage from text
+• Data: lots of people’s text data and emoji usage
+• Model: given text x suggest emoji y
+• Steps:
+• Server has initial model
+• Push initial model to devices
+• Users give model updates based on their data
+• Server aggregates updates into a better model
+Federated Learning
+Analyst wants to compute on data held in a distributed way by its users
+x1
+f(M,x1)
+model M model M model M
+x2
+f(M,x2)
+x3
+f(M,x3)
+Federated Learning
+Analyst wants to compute on data held in a distributed way by its users
+x1
+f(M,x1)
+model M’
+x2
+f(M,x2)
+x3
+f(M,x3)
+Typical steps in FL update round
+1. 2. 3. 4. 5. 6. Model initialization: Server has a hypothesized ML model
+Client selection: Server samples a set of clients who meet eligibility
+requirements (e.g., smartphone, plugged in, connected to wifi).
+Broadcast: Selected clients download current model and training plan
+(e.g., model weights and TensorFlow graph).
+Client computation: Each selected device locally computes an update to
+the model (e.g., running SGD on their data, compute gradient update).
+Aggregation: Server collects an aggregation of the device updates
+Model update: Server updates the shared model based on the
+aggregated update.
+Scale of FL (at Google in 2019)
+• Total population size: 106
+- 107
+• Devices in one round of training: 50 - 5,000
+• Number of rounds for convergence: 500 - 10,000
+• Wall clock training time: 1 - 10 days
+Privacy guarantees?
+• No inherent protection! Information can still leak!
+• Many properties that makes it easier to add privacy technologies:
+• Computation is performed on-device
+• Data never stored on server
+• No “unnecessary” information shared
+• Each client sampled “not too many” times
+• Updates done in batches, so not individual-level data
+Federated learning is a framework.
+Not inherently privacy preserving but very easy
+to add privacy tools.
+What’s the right technology to use?
+• Differential privacy
+• Secure Multiparty Computation
+• FHE (encryption where you can compute without decrypting)
+• SGX servers (also called secure servers / trusted execution
+environments. Loose idea: only the server can decrypt itself, so no
+one else can read contents)
+Federated Learning with secure server
+Pro: server is secure, no additional noise required
+Con: requires users to trust that server really is secure, result
+output in the clear
+x1
+x2
+f(M,x1)
+f(M,x2)
+f(M,x3)
+M’=g(M,x)
+x3
+Federated Learning with MPC
+Pro: MPC is secure, doesn’t require users to trust a server
+Con: high communication overhead under MPC
+x1
+x2
+M’=g(M,x)
+x3
+Federated Learning with secure server + central DP
+Pro: server is secure, user data cannot be inferred from the
+published results
+Con: requires users to trust that server is secure, some
+additional noise added
+f(M,x1)
+x1
+f(M,x2)
+x2
+M’=
+g(M,x)+noise
+f(M,x3)
+x3
+Federated Learning with MPC + central DP
+Pro: MPC is secure, doesn’t require users to trust a server, user
+data cannot be inferred from the published results
+Con: DP algorithms may involve complicated functions that
+require high communication overhead under MPC, some
+additional noise added, DP is continuous and MPC is discrete
+x1
+x2
+M’=g(M,x)+noise
+x3
+Federated Learning with local DP
+Pro: Users add their own privacy, doesn’t require users to trust a
+server, user data cannot be inferred from the submitted data or
+published results
+Con: LOTS of additional noise added (O 𝑛 additional error
+relative to centralized DP for 𝑛 users)
+x1
+f(M,x1 + noise)
+x2
+f(M,x2 + noise)
+M’=
+g(M,x+noise)
+x3
+f(M,x3 + noise)
+In class activity (~20 min)
+• (~15 min) In a group of 3-4, pick one of the methods for doing FL
+• Delve deeper into the technical integration of these tools for this task. How
+does FL change the requirements of integrating them?
+• Think deeper about pros and cons. Any technical or social challenges? What
+would work and what would be hard?
+• Mini practice for group projects ☺
+• Brief Courseworks quiz when you’re done discussing
+• (~5 min) One person should be prepared to briefly share back with
+the class what was discussed
+Golden goose of private federated learning:
+Combine LDP + MPC (or other crypto tools) to get:
+• Accuracy of centralized DP
+• Trust model of LDP/MPC
+• Ease of communication of LDP
+Lots of ongoing work in this space
+Key trick: Offloading “expensive” computations to the user under LDP, and
+using MPC only for ”easy” computations
+Practical challenges in FL
+• May have too many users to collect all their data at once
+• Sample only a small fraction at each time (mini-batch)
+• Must decide how many users to sample
+• Introduces sampling error
+• Works best with iterated algorithms (e.g., SGD)
+• Updates may arrive late – how to incorporate?
+• Users may drop out randomly (or adversarially?) during your multi-
+round protocol
+These are mostly solvable with tools from
+algorithm design and statistics
+Today’s Homework
+• Homework 3 Part 2 due Tuesday 4/8 at 11:59pm on Gradescope
+• Work on projects with your group
+Questions?
+Secure Multi-Party Computation
+(MPC)
+
+Mar. 24, 2025
+Agenda:
+1. Introduction to the
+MPC and its security
+guarantees
+2. A concrete example
+3. Secret-sharing
+4. Computing using MPC
+Slide credit: Mayank Varia, Shafi Goldwasser, Ran Canetti
+Defining MPC (2019 U.S. Senate bill S.681)
+“Secure multi-party computation … enables different participating entities in
+possession of private sets of data to link and aggregate their data sets for the
+exclusive purpose of performing a finite number of pre-approved computations
+without transferring or otherwise revealing any private data to each other or
+anyone else.”
+a b
+f(a,b) f(a,b)
+Availability of data creates enormous potential
+• Health: disease control by trend prediction
+• Finance: predictions for financial markets
+• Economic Growth: intelligent consumer targeting
+• Infrastructure: Traffic patterns and energy usage
+• Vision: Facial and Image recognition
+• NLP: Speech recognition, Machine Translation
+• Security: Threat Prediction models, spam
+but typically requires sharing data sets
+e.g., collaborate across institutions
+Example: Patients’ genomic data: held by many different
+entities who may be regulated and can’t share
+Solution?
+send data to a
+trusted party
+Objective of Secure MPC
+• Suppose n people have sensitive data x1, x2, …, xn
+• Want to engage in jointly computing a publicly-known function f
+without directly sharing data with a central party
+y = 𝑓 𝑥1, 𝑥2, … , 𝑥𝑛• Assume that at most t of the n parties are adversarial
+• They might collectively be acting as a passive Eve (eavesdropper) or an active
+Mallory (malicious)
+• Want to ensure: nothing is revealed about the inputs beyond what
+can be inferred from the output y
+• Note: for some f, even inference is bad, but we’re not focused on that today
+The General Problem:
+Secure Multiparty Computation
+x1
+x2
+x3
+n users
+Each user/player has private
+information xi
+Goal: compute function
+y= f(x1,..., xn)
+x5
+x4
+keeping xi private by following a
+(message passing) protocol. At the
+end, all users receive y but don’t
+know each others’ xi
+Who is the Adversary?
+x2
+x1
+x3
+x5
+x4
+Subset of colluding players,
+corrupted by an adversary:
+• Honest but Curious (Eve)
+• Malicious (Mallory)
+Computationally bounded
+Problem with Trusted Center
+Center can be
+Faulty!
+Goal: Decentralized solution ensuring
+Privacy, Correctness, Independence
+of inputs, Fairness, ...
+Security: Real World versus Ideal Simulation
+Real World
+Data2
+Ideal World
+Data1
+Trusted
+Third
+Party
+Data3
+Data5
+Data4
+Adversary can corrupt subset of the
+parties, and Interact with honest
+parties via the protocol
+Adversary can corrupt same parties,
+but only get them to send inputs and
+receive output from trusted party
+Security: Real World versus Ideal Simulation
+Real World
+Ideal World
+Data2
+Data1
+Trusted
+Third
+Party
+Data3
+Data5
+Data4
+We say that a protocol is secure for function f if:
+Whatever an adversary A controlling t faulty players in the real
+world learns, can be learned in the ideal world by an adversary
+that can control the inputs of t players
+Secure Multi-Party Computation
+Data2
+Yao82
+Goldreich-Micali-
+Wigderson 86
+Benor-Goldwasser-
+Wigderson 87
+Data1
+Data3
+Data5
+Data4
+Universal Theorem: There exists a secure protocol for n
+parties to compute any polynomial time function f
+Under some conditions about no more than t-out-of-n
+people colluding.
+More on MPC, but first a detour:
+How do you share a secret?
+A Taste of Secure Computation
+Computing the average value
+𝑥1 𝑥2
+Let 𝑥1, 𝑥2, 𝑥3 denote values, say
+(8,10,12)
+PROTOCOL:
+𝑥3
+x1 = 8 = 5 + 2 + 1
+x2 = 10 = 3 + 4 + 3
+x3 = 12 = 6 + 5 + 1
+14
+11 5
+y1 y2 y3
+1. Each player chooses at random 3 numbers
+whose sum is her/his value.
+(“secret sharing” [Shamir’79, Blakley’79])
+2. Each player sends green to party 1,
+purple to party 2, red to party 3.
+3. Each recipient sums the “shares” received.
+4. Player i sends yi to all others.
+5. Sum of salaries = y1+y2+y3
+How to generate random secret shares
+(for 3 shares and secret 𝑠)
+1. Pick a number 𝑛 that is larger than any possible secret
+2. Pick 𝑛1 and 𝑛2 uniformly at random
+3. Define 𝑛3 = 𝑠 − 𝑛1− 𝑛2 (𝑚𝑜𝑑 𝑛)
+Note: when you sum up shares need to use modular addition
+In-class activity – simulating MPC
+Perform addition under 3-way MPC:
+1. 2. 3. In groups of 3-ish, agree on an 𝑛.
+Each person chooses a secret 𝑠 between 1 and 𝑛.
+Generate a share for each group member (including yourself) and
+distribute the shares accordingly
+4. Each person adds up the shares they received (mod n), and
+announces that
+5. Group can add up total to compute sum (mod n)
+Courseworks quiz about your experience. Could anything have been
+learned about secret values based on what was publicly shared?
+A Taste of Secure Computation
+Computing the average value
+𝑥1 𝑥2
+Let 𝑥1, 𝑥2, 𝑥3 denote values, say
+(8,10,12)
+𝑥3
+x1 = 8 = 5 + 2 + 1
+x2 = 10 = 3 + 4 + 3
+x3 = 12 = 6 + 5 + 1
+14
+11 5
+y1 y2 y3
+Theorem: [M. Rabin]
+Users cannot deduce more
+information about another users’
+values than computable from the
+average and his/her own value.
+Theorem: [M. Rabin] Can scale up to
+(n-1) colluding players out of n.
+t-out-of-n secret sharing scheme
+• Let S be a random “secret”
+• Want to give shares S1, S2, …, Sn to the n players such that:
+a) Given t of the Si’s, can find out S.
+b) Given t-1 Si
+’s, any secret S is equally likely to have produced this set of
+Si’s
+To see how to do this, we need to talk a lot about polynomials (maybe
+beyond scope of this class). Slides are included in the deck but hidden – take
+a look if you’re interested! It’s extremely cool!
+An illustrative example…
+Goal 3: Evaluating Success
+Employers agree to … contribute data to
+a report compiled by a third party on the
+Compact’s success to date. Employer-
+level data would not be identified in the
+report.
+Workflow
+Trust spectrum
+Trust us Trust no one
+Trust anyone
+Give someone
+all your data
+Secure MPC
+FHE
+How it works
+$9
+$7
+How it works
+$9
+$7
+=
+=
+10
+4
++
++
+11
+3
+How it works
+11
+10
+– –
+4 3
+8
+6
+How it works
+$9
+–
+$7
+$2
+11
+–
+8
+6
+3
+
+### Identifiers
+
+Direct and indirect ways to identify people:
+
+
+| Direct             | Indirect                 |
+| ------------------ | ------------------------ |
+| Full Name          | First Initial, Last Name |
+| DOB                | Gender                   |
+| Street Address     | Zip Code                 |
+| Email Address      | Birth Year               |
+| Biometric          | Height, Weight           |
+| Driver's License   | Geographic Indicators    |
+| SSN                | Demographics             |
+| Credit Card Number | Health Records           |
+| Passport           | Marriage Status          |
+| Birth Certificate  |                          |
+
+PII refers to any data that can be used to identify a specific individual. It is generally categorized into **direct identifiers** (which can explicitly identify a person) and **indirect identifiers** (which, when combined with other data, could be used to identify a person).
+### **Why Does This Distinction Matter?**
+- **Direct Identifiers** alone can be used to uniquely identify an individual.
+- **Indirect Identifiers** might not uniquely identify someone but can do so when combined with other data points.
+- Organizations handling PII must follow data privacy laws (e.g., **GDPR, CCPA, HIPAA**) to prevent misuse and unauthorized access.
+
+Understanding the difference between direct and indirect PII helps organizations and individuals better manage and protect sensitive information.
+
+### Anonymity
+
+Linkage attack: join anonymized data with other sets to get identifiers on people
+
+Problem: 87% of people could be uniquely identified by 3 indirect identifiers
+
+### [[k-anonymity]]
+
+Make sure people have the same data as you, remaining identifiers aren't directly indentifying
+
+A database is **k-anonymous** if every quasi-identifier equivalence class has $\geq k$ entries.
+
+### $\mathscr{l}$-diversity ([[l-diversity]])
+
+For every group of people sharing identifier, make sure they have different private attributes.
+
+A database is **$\mathscr{l}$-diverse** for every quasi-identifier equivalence class each sensitive attribute is $\geq \frac{1}{\mathscr{l}}$ of its entries.
+
+Different interpretations: 
+- How much weight does one sensitive attribute in the equivalence class?
+- No equivalence class has a health problem that is shared by more than $\frac{1}{\mathscr{l}}$ people.
+- $\frac{1}{\mathscr{l}}$ people in the same equivalence class have the same health problem.
+
+### Example
+
+| Ethnicity   | Zip Code | Condition |
+| ----------- | -------- | --------- |
+| Caucasian   | 787XX    | Flu       |
+| Caucasian   | 787XX    | Shingles  |
+| Caucasian   | 787XX    | Acne      |
+| Caucasian   | 787XX    | Flu       |
+| Caucasian   | 787XX    | Acne      |
+| Caucasian   | 787XX    | Flu       |
+| Asian/AfrAm | 78XXX    | Flu       |
+| Asian/AfrAm | 78XXX    | Flu       |
+| Asian/AfrAm | 78XXX    | Acne      |
+| Asian/AfrAm | 78XXX    | Shingles  |
+| Asian/AfrAm | 78XXX    | Acne      |
+| Asian/AfrAm | 78XXX    | Flu       |
+This table is **6-anonymous** (look at the ethnicity column) and **2-diverse** (look at the condition column).
+
+### Activity
+
+> [!warning] Activity
+> With a partner, work together to create a database that cannot be made k-anonymous and ℓ-diverse, while retaining the relevant content of the data
+
+Professors Example [here](https://docs.google.com/spreadsheets/d/1cDRQUjRq9vHJMHLRKXDbD1yUIShpuaFnNmP_vs4Ljww/edit?gid=0#gid=0).
+
+### k-anonymity & l-diversity attacks
+
+
+| Gender (hidden) | Race  | Reason For Visit |
+| --------------- | ----- | ---------------- |
+| *               | White | Prostate cancer  |
+| *               | White | Prostate cancer  |
+| *               | Black | Lung cancer      |
+| *               | Black | Skin cancer      |
+| *               | White | Ovarian cancer   |
+| *               | White | Ovarian cancer   |
+
+> [!example] Example of k-anonymity and l-diversity weakness
+> If we know our neighbor  Bill is a white male and went to the hospital recently...we can deduce he has prostate cancer, so k-anonymity and l-diversity are not the most useful solutions!
+
+
+
+
+### Linkage
+
+- A [[Linkage Attack]] is a method for re-identifying anonymized datasets. 
+	- An example is putting together anonymized databases with more public databases (Netflix, IMDb)
+	- "Brokeback Mountain effect" for identification
+
+| Netflix Dataset (Private) | IMDb (Public)         |
+| ------------------------- | --------------------- |
+| Name of movie             | Name of movie         |
+| Rating out of 5 stars     | Rating out of 5 stars |
+| Date rated                | Date rated            |
+| *                         | Name, username, PII   |
+This shows how people are willing to put some public information out there, but when combined with leaked or anonymized datasets via linkage can result in identification and malicious privacy insights.
+
+1. Take Netflix anonymized user record
+2. Find IMDb user record that matches
+3. Assume they're the same!!!
+4. Make inferences immediately
+
+Linkage between the *real you* and an anonymized dataset that is *believed* to be you can lead to a sort of framing.
+
+On IMDb people have:
+
+- Their real names as usernames
+- Photos of them
+- Usernames that match their Twitter/Insta/etc
+
+### Identification
+
+Databases can be generalized with **matrices**, and many algorithms use matrix math to try and recommend you content.
+
+Most people don't watch most movies, so your Netflix matrix is mostly sparse, mostly null values. The support of a row r is the set of non-null attributes, denoted supp(r).
+
+$\text{Sim}(r_{1},r_{2})$ measures how similar two users are, it's the fraction of movies that they fave the same rating in the same week. High similarity with others means that many others are like you, small similarity means you are unique.
+
+Even if someone only has **half** of the movies you watch, they can still uniquely identify you.
+
+Properties that make datasets vulnerable to re-identification attacks:
+
+1. Sparsity 
+2. Long-tails
+3. Uniqueness of users (most people are not similar)
+
+
+### In-Class Quiz Response
+
+`Name three properties of an anonymized dataset that would make it vulnerable to a re-identification attack.`
+
+```
+If it's sparse and has mostly null values per user, than it can be easier to discover the user based on their unique footprint. We can also rely on people to watch a lot of popular things, but people have their own tastes, thus "long tails" in rankings of popularity show that we can identify people based on how they watch popular **and** unpopular content. Lastly,  the probability of being similar to someone else on a huge dataset (like Netflix) is very low, so you only need a fraction of the data to identify someone.
+```
+
+###  De-anonymization Algorithm
+
+Let's say we want to de-anonymize a record $r$ from the published database.
+1. Sample $r$ from Netflix database $D$ 
+2. Give auxiliary info $\text{Aux}(r)$ related to $r$ to the adversary (IMDb)
+	1. Subset of $r$'s attributes
+3. Given $r$, $\text{Aux}(r)$, we can reconstruct the entire record $r$
+
+We can use an algorithm $A$ where $$A(D,r,\text{Aux}(r))=r'$$
+
+Large scale de-anonymization can happen, we can get the record of someone who is very similar to you.
+
+If $r$ is in the sample, produce similar record $r'$. If $r$ is not in the sample, recognize that there's nothing like $r$, output null.
+
+The inputs for $A$ are a sample $\hat{D}$ of database $D$, record $r \leftarrow D$, auxiliary information $\text{Aux}(r)$. Output is a record $r' \in \hat{D}$ or null, ⊥.
+
+Scoring function assigns a numerical score to each in $\hat{D}$ based on how well it matches $\text{Aux}(r)$.
+
+Matching criterion is how the scores are used to determine if there is a match in $\hat{D}$. 
+
+Record selection selects one "best-guess" record in $\hat{D}$.
+
+For each $\hat{r} \in \hat{D}$, $$\text{Score}(\text{Aux}(r),\hat{r})=\text{min}_{i}\text{Sim}(\text{Aux}(r)_{i},\hat{r}_{i})$$
+Adversary computes matching set $D'$ for some fixed value $\alpha$: $$D'=\{ \hat{r}\in \hat{D}: \text{Score}(\text{Aux}(r),\hat{r}) \}>\alpha$$
+If matching set is empty, output null. Otherwise, output $\hat{r}\in \hat{D}$ with the highest score.
+
+
+Turns out very little auxiliary information is needed, because eight movie ratings and dates with a 14-day error, 99% of records are unique. Two ratings and dates with a 3-day error are sufficient for 68%, and so on. 
+
+You can learn a **lot** from someone's tastes in movies. Religious views, political orientation, sexual orientation, etc.
+
+### Problems with anonymization
+
+1. Removing identifiers or quasi-identifiers is not enough.
+2. The approach of "think of everything that could be used to re-identify" isn't good enough.
+	1. You have to prevent every attack, they only have to win once.
+	2. Also doesn't account for future data releases.
+
+
+
+> [!tldr] Review
+> - [[Quasi-Identifier]]s can identify people
+> - If you remove quasi-identifiers, [[Linkage Attack]]s can occur
+> - What if we had a protected system that doesn't allow linkage attacks?
+> 
+
+
+| Known | Secret |
+| ----- | ------ |
+| ID1   | S1     |
+| ID2   | S2     |
+| ...   | ...    |
+| IDn   | Sn     |
+
+They put a disclosure control system around the table, and an analyst can access the data through different queries. 
+
+```
+if [condition]
+	then q_i=1
+	else q_i=0
+```
+
+$$a=\langle q,s\rangle+\text{error}$$
+$$\sum_{i=1}^{n}q_{i}s_{i}=\sum_{\text{i satisfies condition}}w_{i}s_{i}$$
+You don't give an *exact* answer by adding a little bit of gaussian noise. 
+Many queries: $\vec{a}=Q\vec{s}+\vec{e}$
+
+### Reconstruction from Counting Queries
+
+Given: $Q$, $\vec{a}=Q\vec{s}+\vec{e}$, and some knowledge of the distribution of errors $\vec{e}$ 
+Goal: Find aplausible database $\vec{s}' \in \{ 0,1 \}^n$ and prove something about how close $\vec{s}'$ is to $\vec{s}$.
+How to find a plausible $\vec{s}'$:
+- Solve a constraint satisfaction problem
+	- Find $\vec{s}' \in \{ 0,1 \}^n$ such that $|\vec{a}-Q\vec{s}'|\leq E$ (assuming max error $E$)
+- You can ${\vec{z}} \in [0,1]^n$ such that $|\vec{a}-Q\vec{s}'|\leq E$ then round $\vec{s}'=\text{round}(\vec{z})$
+- If we know that most errors are small, be more clever
+	- Find $\vec{z}$ minimizing errors $|\vec{a}-Q\vec{s}'|$ then round
+
+### Linear Programming
+
+Given: $f\in \mathbb{R}^{n}$, $C\in \mathbb{R}^{m \times n}$, and $y\in \mathbb{R}^{m}$
+Variables: $x\in [0,1]^n$
+Linear Program: Linear objective function and linear inequality constraints, minimize $f^{T}x$, subject to $Cx\leq y$.
+Linear programs are easy to solve in practice, take a while in theory.
+Integer programs $x\in \{ 0,1 \}^n$; NP-hard, but sometimes solvers and heuristics are okay
+
+### LPs for Reconstruction
+
+**Dinur-Nissim '03** 
+
+Attack target dataset $x$, of size $n$. Database entries indexed by a set of unique identifiers $I$. Each entry has a Boolean target attribute $x_{i}$. Each query $q \subseteq [n]$ specifies a subset of entries. Response $a_{q}=q(x)+e_{q}$ is the sum of true value $q(x)=\sum_{i\in q}x_{i}$ plus an error term $e_{q}$. Errors sampled from a zero-mean Gaussian with S.D. $\sigma$, then rounded to the nearest integer. Each query $q$ is a uniformly random subset of $[n]$. Set of all queries is $Q$, and is of size $m$.
+
+For a database of size n, if noise magnitude is $\sigma=o(\sqrt{ n })$, then there exists a simple LP that reconstructs all but a small fraction of $x$. 
+
+**Dwork-McSherry-Talwar '07**
+
+The LP of DN03 is best with a bound on the maximum error. DMT07 is best when some errors may be very significant, but typical errors are small. Goal is to minimize total error across all queries.
+
+
+| Dinur-Nissim '03                                                                                                                                     | Dwork-McSherry-Talwar '07                                                                                                  |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| $$\text{Variables: }x'=(x_{i}')_{i\in I} \text{ and } (e'_{q})_{q\in Q}$$                                                                            | $$\text{Variables: }x'=(x_{i}')_{i\in I} \text{ and } (e'_{q})_{q\in Q}$$                                                  |
+| $$\text{Minimize: }0$$                                                                                                                               | $$\text{Minimize: } \sum_{q\in Q}\|e'_{q}\|$$                                                                              |
+| $$\text{Subject to: } $$<br>$$\forall q\in Q, \space e'_{q}=a_{q}-q(x')$$<br>$$e_{q}'\leq B\sigma$$<br>$$\forall i\in I, \space 0\leq x_{i}'\leq 1$$ | $$\text{Subject to: } $$<br>$$\forall q\in Q, \space e'_{q}=a_{q}-q(x')$$<br>$$\forall i\in I, \space 0\leq x_{i}'\leq 1$$ |
+
+
+### Contextual Integrity
+
+- Helen Nissenbaum defined contextual integrity, where her training as a philosopher helped
+- Key Principles:
+	- Privacy is about how information flows.
+	- The definition of privacy should depend on the context.
+- Ex: 
+	- Health info going to your doctor is okay
+	- Health info going to your neighbor/boss/etc is not okay
+- Information flow is appropriate if it respects cultural norms
+
+### Context
+
+- Why does the content exist in society?
+- Who are the actors operating?
+- What types of information flow?
+- What's appropriate information flow?
+- What are the restrictions on the information flow?
+
+### Information Norm
+
+1. Data subject
+2. Sender of the data
+3. Recipient of the data
+4. The information type
+5. Transmission principle
+
+We need all five to evaluate the appropriateness of the flow.
+
+
+> [!example] Healthcare Context
+> - Contextual Purposes: Preserving health of the people, etc
+> - Agent Roles: Doctors, nurses, etc.
+> - Information Attributes: Medical test results, treatment notes, blood type, etc.
+> - Information Norms: A patient's medical record may be sent from their primary care physician to a specialist when the patient requests a referral.
+
+### More Examples
+
+
+| Premise                           | Data Subject         | Data Sender              | Data Recipient       | Information Type                    | Transmission Principle        |
+| --------------------------------- | -------------------- | ------------------------ | -------------------- | ----------------------------------- | ----------------------------- |
+| A background check on an employee | Prospective employee | Background check company | Prospective Employer | Court records, arrest records, etc. | With employee consent/request |
+| Doing taxes                       | Client               | Client                   | Tax preparer         | Financial info                      | Client hires tax preparer     |
+
+
+
+[[Laplace Mechanism]]: used to privately answer numerical functions $f:\mathbb{N}^{|X|}\to \mathbb{R}$. Computes true answer and adds random noise.
+
+Sensitivity of a function $f:\mathbb{N}^{|X|}\to \mathbb{R}$ is $$\Delta = \text{max}_{\text{x,y neighbors}} |f(x)-f(y)|$$
+This captures how much value of the function can change in the worst case by changing one person's data.
+
+If the sensitivity is really big (i.e. salary) then you want to be careful about setting an upper limit.
+
+Let $Y \sim \text{Lap}(b)$ be a random variable with Lapalace distribution with parameter $b$. It's a two-sided exponential around 0.
+
+Partially differentiable function of the distribution with parameter $b$: $$f(y)=\frac{1}{2b}\exp\left( -\frac{|y|}{b} \right)$$
+Smaller $b$ is pointer with lower variance and larger $b$ is flatter with higher variance.
+
+### Laplace Mechanism
+
+Given a function $f:\mathbb{N}^{|X|}\to \mathbb{R}$, the Laplace Mechanism is $$M_{L}(x,f,\epsilon)=f(x)+Y$$
+where $Y \sim \text{Lap}\left( \frac{\Delta f}{\epsilon} \right)$.
+
+Compute the true value of the function f(x) and then add Laplace noise that depends on the functions sensitivity and your desired privacy. Larger sensitivity $\Delta f$ or smaller $\epsilon$ means more noise.
+
+This mechanism is $\epsilon$-differentially private. There's no $\delta$ going on here.
+
+Let $f:\mathbb{N}^{|X|}\to \mathbb{R}$ be any function. For all $\beta \in (0,1]$, $$\text{Pr}\left[ |f(x)-M_{L}(x,f,\epsilon)|\leq \ln( \frac{1}{\beta} )\times ( \frac{\Delta}{\epsilon}) \right]1-\beta$$
+With high probability you get answers close to the true answers, closeness depends on high probability parameter, function sensitivity and privacy parameter. 
+
+Privacy alone is easy, but we want both privacy and accurate answers. Laplace Mechanism is $\epsilon$-DP. Smaller $\epsilon$ gives better privacy and worse accuracy.
+
+#### Examples
+
+If the query is "How many individuals in the database are x?", then **the sensitivity is 1.** Adding or removing one person can only change the count by 0 or 1, the max of which is 1.
+
+If the query is two-dimensional, sensitivity is 2, then the sensitivity is 2.
+
+#### High-dimensional mechanism
+
+We can also think about answering multiple functions at one time, modeled as a high dimensional function that outputs $k$ numbers to answer $k$ functions at once.
+
+$l_{1}$-sensitivity of a function is $$\Delta = \text{max}_{\text{x,y neighbors}} |f(x)-f(y)|_{1}$$
+Recall the $l_{1}$-distance between two vectors is $|x-y|_{1}=\sum_{i=1}^{|X|}|x_{i}-y_{i}|$. This extends our same notation of sensitivity.
+
+Given $f:\mathbb{N}^{|X|}\to \mathbb{R}^{k}$, the Laplace Mechanism is $$M_{L}(x,f,\epsilon)=f(x)+\langle Y_{1},\dots Y_{k}\rangle$$ where all $Y_{i} \sim \text{Lap}\left( \frac{\Delta f}{\epsilon} \right)$ independently.
+
+Let $f:\mathbb{N}^{|X|}\to \mathbb{R}^{k}$ be any function and let $y=M_{L}(x,f,\epsilon)$. For all $\beta \in (0,1]$, $$\text{Pr}\left[ |f(x)-y|_{1}\geq \ln( \frac{k}{\beta} )\times ( \frac{\Delta f}{\epsilon}) \right]\leq\beta$$
+### Histogram Queries
+
+If it is the case that one person's data can only change one of the values of a high-dimensional function $f:\mathbb{N}^{|X|}\to \mathbb{R}^{k}$, then we call that function a histogram query.
+
+**Examples:**
+- Binary answers (yes,no)
+- Age in cohorts (20-29, 30-39, etc)
+
+Consider a $k$-dimensional histogram query $f:\mathbb{N}^{|X|}\to \mathbb{R}^{k}$ that counts how many people in each of $k$ age buckets. The sensitivity of $f$ is $\Delta f=1$ because changing one persons data only changes the count in one bucket by 1. We can add noise to get. $\epsilon$-DP, only works on disjoint queries!
+
+### Score Function 
+
+The quality of an outcome is measured by a score function $$q:\mathbb{N}^{|X|}\times R\to \mathbb{R}$$ where $q(x,r)$ is a measure of how good $r$ would be on database $x$. 
+
+The choice of quality score depends on application. $q(x,r)$ is the measure of people in $x$ who have the eye color $r$. 
+
+Two properties:
+1. Better answers get higher scores
+2. Capture nuances between good-medium-bad outcomes
+
+Tailor the randomization to the sensitivity, this time the function will be our score function $q$. The sensitivity of a score function $q:\mathbb{N}^{|X|}\times R\to \mathbb{R}$ is $$\Delta q=\text{max}_{r\in R} \text{ max}_{\text{x,y neighbors}}|q(x,r)-q(y,r)|$$
+This still measures the maximum change in the sensitivity function's value if one person changes their data.
+
+### Exponential Mechanism
+
+Definition: Given a quality score $q:\mathbb{N}^{|X|}\times R\to \mathbb{R}$, the exponential mechanism is defined as:
+
+$$M_{E}(x,q,\epsilon)=\text{output } r\in R \text{ with probability } \propto \frac{\exp(\epsilon \times q(x,r))}{2\Delta q})$$
+
+$\propto$ meaning proportional to, ensuring distribution with total probability 1. We place higher weight on outcomes with higher quality, so we're more likely to pick one with high quality.
+
+Let $r \in R$ be the output of $M_{E}(x,q,\epsilon)$. Then, for all $\beta\in(0,1]$, $$\text{Pr}\left[ q(x,r)-\text{max}_{r'\in R}q(x,r')\geq\frac{2\Delta q\times \ln\left( \frac{|R|}{\beta} \right)}{\epsilon}\right]\leq \beta$$
+
+
+Central model
+- requires trusted party
+- add less noise -> more accurate
+- Laplace Mechanism
+
+Local model
+- Add noise locally, trust not needed
+- More error b/c noise isn't coordinate
+- Randomized Response
+
+### Central Model
+
+An algorithm $M:\mathcal{X}^n\to R$ is an $(\epsilon,\delta)$-differentially private if $\forall$ neighboring databases $D, D' \in\mathcal{X}^n$ and $\forall S\subseteq R$, $$\text{Pr}[M(D)\in S]\leq e^{\epsilon}\text{ Pr}[M(D)\in S]+\delta$$
+
+> [!example] Central Model in Practice
+> LinkedIn uses the system for gathering link info for Top 10 news stories.
+> 
+> Uber used central DP so that employees couldn't access the raw data in response to prior direct Uber employee access to customer data.
+
+Main use case is that the entity already has the data and allows others limited access, so it requires trust in exchange for better accuracy. This allows for more complex operations.
+
+### Local Model
+
+An algorithm $M:\mathcal{X}\to R$ is an $\epsilon$-local randomizer if $\forall$ inputs $x, x' \in\mathcal{X}$ and $\forall S\subseteq R$, $$\text{Pr}[M(x)\in S]\leq e^{\epsilon}\text{ Pr}[M(x)\in S]$$
+
+> [!Example] Local Model in Practice
+> Google uses DP for Chrome crash reports so they can figure out what websites and settings crash Chrome most so they can fix it.
+> 
+> Apple uses it for emoji and text prediction, so they can train their model w/o privacy infringement.
+
+The main use case for local model is for highly sensitive data on-device, where you don't need a trusted human being to check everything. Even though there's some error tradeoff for local models, companies gather huge datasets and can still reach their goal.
+
+### Discussion
+
+Local:
+- crash reports
+- general telemetry
+- LLM queries
+
+Central:
+- link information
+- top 10 watched shows on netflix
+- crash reports
+
+Not sure:
+- financial fraud reporting?
+
+### Privacy-Accuracy Trade-Off
+
+$$\text{max}_{\epsilon} \lambda_{p} u_{\text{privacy}}(\epsilon)+\lambda_{a}u_{\text{accuracy}}(a) \text{ s.t. } (a,\epsilon) \text{ feasible}$$
+
+Feasibility, e.g., [[Laplace Mechanism]]
+$$\text{Pr}\left[ |\alpha|\leq \ln( \frac{1}{\beta} )\times ( \frac{\Delta f}{\epsilon}) \right]\geq 1-\beta$$
+- Different mechanisms have different guarantees
+- You want to balance privacy and accuracy
+- This is all very complex in practice
+
+1. Pick an algorithm
+2. Analyze accuracy as a function of error
+3. Pick an $\epsilon$ to balance privacy-accuracy trade-off
+4. Done
+
+For multiple queries:
+1. Pick an algorithm
+2. Analyze accuracy as a function of error
+3. Pick an $\epsilon$ to balance privacy-accuracy trade-off
+4. Repeat 1-3 for all relevant queries
+5. Analyze total privacy loss via composition
+
+If privacy loss is too large:
+
+1. Pick a privacy budget
+2. Collect queries
+3. Collect per query privacy $\epsilon'$ via reverse engineering
+4. Run each query with appropriate $\epsilon'$-DP algorithm
+5. Analyze accuracy of each output as a function of $\epsilon'$
+
+
+
+**Need to know to decide if $\epsilon$ is "good"**
+ - $\delta$
+- Impact on accuracy
+- Process of picking $\epsilon$
+- Impact of redistricting process/outcomes
+- Other uses of data (goals/metrics/peformance)
+- Feels big relative to other user cases
+	- Composition & per-query $\epsilon$
+
+**Picking $\epsilon$**
+- Tradeoff w/other parameters
+- Accuracy analysis 
+	- Specifying accuracy goals
+	- Relative importance of privacy vs. accuracy
+- Comparison to similar use cases -> not too helpful for Census people
+	- tech company applications and their results
+
+
+Potential Arguments
+- Sensitivity of data is low
+- Long-term risks of privacy violation
+
+Cost-benefit analysis of privacy
+- Data doesn't need privacy protection
+- privacy leak could be damaging
+
+A tool with formal privacy guarantees → DP?
+
+| Pros                      | Cons          |
+| ------------------------- | ------------- |
+| Formal privacy            | Accuracy loss |
+| Don't need strong privacy |               |
+| Bigger $\epsilon$ is okay |               |
+| Not much accuracy loss    |               |
+
+### Interpreting choosing $\epsilon$
+
+$$\begin{align}
+& \epsilon=1.2 \text{ noise } \sigma=2.36 \\
+& \epsilon=10 \text{ noise } \sigma=0.3 \\
+& \text{What about the other } \epsilon \text{'s?}
+\end{align}$$
+
+A more ideal solution is to present multiple (~5) $\epsilon$'s and have the company agree on one.
+
+- What are queries?
+	- Sensitivity
+	- Goals/accuracy
+	- How many queries, per-query $\epsilon$
+
+### Accuracy Metrics
+
+$$|M(x,f,\epsilon)-f(x)|\leq \alpha$$
+- Multiplicative error
+- Classification error
+
+$$\begin{cases}
+1, & \text{if } M(x,f,\epsilon) \neq f(x) \\
+0, & \text{o/w} \\
+ \end{cases}$$
+
+$\leq e^{10} \cdot \text{baseline risk}$
+
+### Splitting $\epsilon$ across budgets & queries
+
+- external people (vs. internal)
+	- Anyone will try to break your stuff
+	- Foreign governments and shell corporations lol
+- make it streamlined to not lose money
+
+
+
+### Introduction to Synthetic Data
+
+Synthetic data is an artificially created dataset generated as a function of original data. Unlike traditional query-answering mechanisms that provide answers to specific questions about a database, synthetic data generation produces an entirely new dataset that maintains the statistical properties of the original data1.
+
+The key goal is to create a synthetic database that, when queried, provides statistically similar answers to what would be obtained from the original database. For example, if 57% of entries in the original dataset are marked as "1", a good synthetic dataset might show approximately 50% of entries as "1"1.
+
+**Why Use Synthetic Data?**
+
+Synthetic data offers several practical advantages:
+
+- Allows practitioners to maintain their existing data workflows without change1
+    
+- Eliminates the need for specialized privacy tools that analysts might not trust1
+    
+- Enables unlimited computations without depleting a privacy budget1
+    
+- Removes the need for ongoing interaction between analysts and privacy experts1
+    
+- Sometimes required by regulatory bodies (e.g., Census Bureau)
+    
+
+### Challenges with Synthetic Data
+
+Despite its benefits, synthetic data presents several challenges:
+
+- Measuring accuracy is complex due to the high-dimensional nature of data
+    
+- No one-to-one mapping exists between individuals in the original and synthetic datasets
+    
+- Standard data cleaning "sanity checks" may not work as properties hold only in aggregate
+    
+- Accuracy may be limited to specific types of queries
+
+- Accuracy guarantees are approximate rather than exact
+    
+
+### Privacy Considerations
+
+A critical misconception is that synthetic data automatically ensures privacy, which is not the case1. For example:
+
+- K-anonymizing a dataset creates a "new" dataset but doesn't guarantee privacy
+    
+- Both the data generation algorithm and the resulting synthetic dataset may leak information1
+    
+
+To achieve meaningful privacy protection, synthetic data generation should be paired with formal privacy technologies like differential privacy.
+
+### Methods for Generating Private Synthetic Data
+
+Two main approaches for creating privacy-preserving synthetic data are:
+
+#### SmallDB Algorithm
+
+The SmallDB algorithm [BLR '08] takes an original database and a set of queries, then produces a smaller synthetic database that approximately answers those queries1:
+
+1. Enumerates all possible databases of the desired size
+    
+2. Assigns quality scores based on maximum query error
+    
+3. Uses the Exponential Mechanism to sample a database with probability proportional to its quality score
+    
+
+**Advantages**: Differentially private with formal accuracy guarantees
+**Disadvantages**: Exponential time complexity and accuracy limited to pre-specified query classes
+
+#### Private Generative Adversarial Networks (GANs)
+
+GANs use two competing neural networks:
+
+- Generator: Creates synthetic data
+
+- Discriminator: Determines whether data is synthetic or real
+    
+
+These networks are trained through techniques like stochastic gradient descent (SGD). For privacy protection, differentially private versions of the training algorithms (e.g., DP-SGD) can be substituted1.
+
+**Advantages**: No pre-specification of queries required, trained model is easy to share, can generate unlimited amounts of data1  
+**Disadvantages**: No formal accuracy guarantees, slow training process, operates as a black box1
+
+### Real-World Applications
+
+A notable application of private synthetic data appears in medical research. Researchers applied differentially private GANs to blood pressure data from the Systolic Blood Pressure Intervention Trial dataset, demonstrating minimal accuracy loss while maintaining privacy protections1.
+
+### Conclusion
+
+Synthetic data represents a valuable privacy technology that bridges the gap between usability and privacy protection. When properly implemented with formal privacy guarantees, it can enable data analysis while protecting individual privacy. However, careful consideration of its limitations and appropriate pairing with technologies like differential privacy is essential for responsible implementation.
+
+Synthetic data generation continues to be an active area of research, with increasing applications across various domains requiring privacy-preserving data analysis.
+
+
+
+### Introduction to Cryptography as a Policy Issue
+
+Cryptography fundamentally rearranges power by configuring who can do what and from where. This makes it an inherently political tool with moral dimensions2. The political nature of cryptography is evident in legislation like the USA PATRIOT Act, which has provisions related to surveillance and encryption.
+
+### Comparing Cryptography with Differential Privacy
+
+| Differential Privacy                 | Cryptography                                                        |
+| ------------------------------------ | ------------------------------------------------------------------- |
+| Invented 2006                        | Been around since 1980s                                             |
+| New challenges in regulation and use | Regulations exist                                                   |
+| Adds noise to hide info              | Masks info                                                          |
+| Privacy-accuracy tradefoff           | Computational challenges                                            |
+| DP is great for aggregate analysis   | Encrypted communication ensures that only intended parties see info |
+
+Private-key encryption, or symmetric encryption has functions $Gen, Enc, Dec$ where $$\begin{align}
+Enc_{k}(m)=c \\
+Dec_{k}(c)=m
+\end{align}$$
+### Class Activity (Caesar Cipher) 
+$$K=\{ ABCDEFGHIJKLMNOPQRSTUVWXYZ \}$$
+- Key: -5
+- Encrypted Word: UWNAFHD
+- Decrypted Word: PRIVACY
+
+1. Alice & Bob generate key
+2. Alice picks $m$, sends $Enc_{k}(m)$ to Bob
+3. Bob applies $Dec_{k}(Enc_{k}(m))=m$
+4. Eva sees $c=Enc_{k}(m)$ doesn't know k, tries to guess m
+
+### Private-Key Cryptography Fundamentals
+
+**Basic Setup:**  
+Private-key cryptography involves a scenario where Alice wants to send a secret message to Bob without anyone else being able to read it. The process works as follows:
+
+1. Alice encrypts her message (plaintext) using an encryption function (Enc) and a private key
+    
+2. The encrypted message (ciphertext) is sent through potentially insecure channels
+    
+3. Bob decrypts the ciphertext using a decryption function (Dec) and the same private key2
+    
+
+**Formal Definition:**  
+A private-key encryption scheme consists of three algorithms2:
+
+- Gen: A probabilistic algorithm that outputs a key k from a keyspace K
+    
+- Enc: Takes input key k and message m, outputs ciphertext c
+    
+- Dec: Takes input key k and ciphertext c, outputs message m
+    
+
+### Kerckhoff's Principle
+
+An important concept in cryptography is that the details of the encryption scheme should not be secret—only the key should be kept private2. This allows for transparency, red-teaming, and public scrutiny of encryption methods. Similarly, in differential privacy, you can publish that you're using the Laplace Mechanism and the ε value, just not the specific noise values2.
+
+### Desiderata of Encryption Schemes
+
+A good encryption scheme must satisfy two key properties:
+
+1. **Correctness**: Dec_k(Enc_k(m)) = m
+    
+    - Bob can accurately decrypt the message sent to him
+        
+2. **Security**: The ciphertext c should leak nothing about the plaintext m that an attacker didn't already know
+    
+    - An eavesdropper (Eva) who can see the ciphertext transmitted over the internet shouldn't be able to make meaningful inferences about the original message
+        
+
+### Caesar Cipher Example
+
+The Caesar cipher is a simple historical encryption method where:
+
+- Letters are shifted k positions in the alphabet
+    
+- For example, with k=3, A→D, B→E, C→F, etc.
+    
+- Gen(K): Pick a number between 1 and 26 uniformly at random
+    
+- Enc_k(m): Shift every letter of m by k to the right
+    
+- Dec_k(c): Shift every letter of c by k to the left2
+    
+
+The Caesar cipher is insecure because:
+
+- The keyspace is tiny (only 26 possible keys)
+    
+- Frequency analysis can easily break it
+    
+- An attacker can try all possible keys (brute force attack)2
+    
+
+### Security Definitions
+
+**Eavesdropping Indistinguishability Experiment:**
+
+The $PriK^{eav}_{A,\prod}$ experiment defines a formal test of encryption security2:
+
+1. Adversary selects two messages m₀, m₁
+    
+2. A random key k is generated and a random bit b ∈ {0,1} is chosen
+    
+3. Ciphertext c = Enc_k(m_b) is given to the adversary
+    
+4. Adversary outputs guess b'
+    
+5. Experiment outcome is 1 if b'=b (success) and 0 otherwise (failure)
+    
+
+**Perfect Secrecy:**  
+An encryption scheme has perfect secrecy if for any adversary, $Pr[PriK^{eav}_{A,\prod} = 1] = 1/2$
+
+- This means the adversary can do no better than random guessing
+    
+- The ciphertext leaks no information about the plaintext
+    
+- The two are perfectly independent2
+    
+
+### One-Time Pad
+
+The one-time pad is an encryption scheme with perfect secrecy:
+
+- Uses XOR (exclusive OR) operation
+    
+- Key k is a uniformly random bitstring of same length as message m
+    
+- Enc_k(m) = k ⊕ m (bitwise XOR)
+    
+- Dec_k(c) = k ⊕ c
+    
+- Perfectly secret because XOR with random bits produces random output
+    
+
+**Limitations of Perfect Secrecy:**
+
+- One-time pad requires key length equal to message length
+    
+- Perfect secrecy requires key at least as long as message
+    
+- Generating true randomness is "expensive"
+    
+- One-time pad is impractical for large messages like emails
+    
+
+### Computational Secrecy
+
+Because perfect secrecy is impractical, modern cryptography relaxes the requirements in two ways:
+
+1. **Strength of adversary**: Consider only computationally efficient adversaries
+    
+    - Probabilistic Polynomial Time (PPT) adversaries: use randomized algorithms that run in polynomial time relative to security parameter n
+        
+    - Examples of polynomial functions: n², 5n¹⁷+0.2n
+        
+    - Non-polynomial functions: e^n, log n2
+        
+2. **Success probability**: Allow for negligible advantage over random guessing
+    
+    - A negligible function is smaller than any inverse polynomial
+        
+    - Examples of negligible functions: e^(-n), 1/n^(log n)
+        
+    - Non-negligible functions: n², 1/n, 1/n²2
+        
+
+**Computational Security Definition:**  
+A computationally secure private-key encryption scheme meets these criteria:
+
+1. Correctness: Dec_k(Enc_k(m)) = m
+    
+2. Security: For any PPT adversary A, Pr[PriK^eav_A,Π = 1] ≤ 1/2 + negl(n)2
+    
+
+### Cryptography and Differential Privacy in Policy Context
+
+While DP is often considered difficult to regulate due to its mathematical complexity and numerous parameters, cryptography has a similar mathematical complexity but benefits from decades of public acceptance and explanatory frameworks2.
+
+The perception that cryptography is "easier" to regulate (things are either encrypted or not) overlooks its technical complexity. As DP matures as a field, it may develop similar clarity and acceptance in policy contexts as cryptography enjoys today2.
+
+### Conclusion
+
+Cryptography, particularly private-key cryptography, provides essential tools for secure communication. While perfect secrecy is theoretically ideal, practical implementations rely on computational security assumptions. Understanding the fundamental concepts, security definitions, and limitations of cryptographic systems is crucial for both technical implementation and policy considerations.
+
+
+
+
+With private-key cryptography, Alice and Bob have to know the key before communication. In public-key cryptography, keys can be publicly shared. Think of this key like a shared physical key used to lock/unlock the same box.
+
+### Public-Key Encryption
+
+1. Bob generates a pair of keys $(sk,pk)$ using $Gen$
+	1. $pk$ = public key
+	2. $sk$ = secret key
+2. Alice encrypts her message using Bob's public key
+	1. $Enc_{pk}(m)=c$
+3. Bob decrypts the ciphertext using his secret key
+	1. $Dec_{sk}(c)=m$
+
+*Metaphor*: Public key is like a lock that can only be unlocked by the correct secret key.
+
+
+```mermaid
+%%{init: { "theme": "neutral" }}%%
+flowchart TD
+    start([Begin Public Key Encryption Process]) --> keygen
+    
+    subgraph keygen["Key Generation (Bob)"]
+        B1[Generate key pair using Gen algorithm] --> keypair
+        keypair{Key Pair} --> |Secret Key sk| SK[Keep private]
+        keypair --> |Public Key pk| PK[Share publicly]
+    end
+    
+    subgraph encrypt["Encryption (Alice)"]
+        A1[Receive Bob's public key] --> A2
+        M[Original message m] --> A2
+        A2[Encrypt using Bob's public key] --> C[Ciphertext c]
+    end
+    
+    subgraph decrypt["Decryption w/Bob"]
+        B2[Receive encrypted ciphertext] --> B3
+        B3[Decrypt using secret key] --> DM[Decrypted message m]
+    end
+    
+    PK -->|Public Channel| A1
+    C -->|Public Channel| B2
+    SK -.->|Used for decryption| B3
+    
+    DM --> fin([End: Bob has original message])
+    
+    classDef public fill:#ffcc99,stroke:#333,stroke-width:2px
+    classDef private fill:#ccffcc,stroke:#333,stroke-width:2px
+    classDef process fill:#ccccff,stroke:#333,stroke-width:2px
+    
+    class PK,A1,C,B2 public
+    class SK,B3 private
+    class B1,A2 process
+
+```
+
+### Example Encryption Scheme
+
+$$\begin{align}
+\text{Public key } &(n,a) \\
+\text{Private key } &b \\
+\text{Message }  &m\\
+Enc_{n,a}(m) &=m^{a}(mod \space n) \\
+Dec_{n,b}(c) &=m^{d}(mod \space n) \\
+Dec_{n,b} Enc_{n,a}(m) &=(m^a)^b=m
+\end{align}$$
+
+Choose prime numbers $p,q$
+
+Set $n=p\cdot q$
+
+Choose $a$ s.t. $1<a<n$ and $a,n$ share no common factors (are co-prime).
+
+Choose $b=a^{-1} (mod \space n)$
+- $x \space (mod \space n)$ is asking for the remainder when $x$ is divided by $n$
+- $x^{-1} \space (mod \space n)$ is asking for the number $y$ s.t. $x \cdot y \space (mod \space n)=1$
+- Such an inverse is always guaranteed to exist
+
+#### Example Key Generation
+
+$$\begin{align}
+p&=2 \\
+q&=3 \\
+n&=p\cdot q=6 \\
+a&=5 \text{ s.t. } 1<a<n, \text{coprime} \\
+b&=a^{-1} \space (mod \space n)=5^{-1} \space (mod \space 6)=5 \\
+\end{align}$$
+
+$$\begin{align}
+\text{Public key } &(n,a)=(6,5) \\
+\text{Private key } &b=5 \\
+\text{Message }  &m=3\\
+Enc_{n,a}(m) &=3^{5}(mod \space 6)=243(mod \space 6) =3 \\
+Dec_{n,b}(c) &=3^{5}(mod \space 6)=243(mod \space 6)= 3\\
+Dec_{n,b} Enc_{n,a}(m) &=(m^a)^b=m
+\end{align}$$
+
+This is a slightly incorrect version of RSA. In practice, $p,q$ should be thousands of digits long.
+
+One of the big ideas here is that It's easy to multiply numbers, hard to factor numbers.
+
+### Security
+
+Given public-key encryption scheme $\prod=(Gen,Enc,Dec)$, security parameter $n$, keyspace $K$, message space $M$, we want: 
+1. **Correctness**: $Dec_{sk}\big( Enc_{pk}(m)\big)=m$ for $(pk,sk) \leftarrow Gen(n)$
+	1. Bob can accurately decrypt the message intended for him
+2. **Security**: For any PPT adversary A, $$Pr\left[  PubK_{A,\prod}^{eav}(n)=1 \right]\leq \frac{1}{2}+negl(n)$$
+	1. The adversary can't successfully guess the message from the ciphertext 
+
+$PubK_{A,\prod}^{eav}(n)$
+1. Adversary selects a pair of messages $m_{0},m_{1}\in M$
+2. A random key pair $(pk,sk)$ is generated with $Gen$, and a random bit $b\in \{ 0,1 \}$ is chosen
+3. Ciphertext $c\leftarrow Enc_{pk}(m_{b})$ and the public key $pk$ are given to A
+4. A outputs a bit $b'$ that is a guess of $b$
+5. Then the outcome of the experiment is x$$PubK_{A,\prod}^{eav}(n)=\begin{cases}
+1 & \text{if } b'=b & \text{(i.e., adversary succeeded)} \\
+0 & \text{if } b'\neq b & \text{(i.e., adversary failed)} \\
+\end{cases}$$
+****
+
+
+
+### Multi-Party Computation
+
+Suppose $n$ people have sensitive data $x_{1},x_{2},\dots,x_{n}$. We want to jointly compute a publicly-known function $f$ without directly sharing data with a central party $$y=f(X_{1},X_{2},\dots X_{n})$$
+Assume that at most $t$ of the $n$ parties are adversarial.
+- *Eve*: eavesdropper, follows protocols faithfully
+- *Mallory*: malicious, may not follow protocols faithfully
+Want to ensure that nothing is revealed about the inputs beyond what can be inferred from $y$.
+
+Secure MPC: 
+- $n$ users
+- Each user has private info $x_{1}$
+- Goal: Compute function $y=f(x_{1},x_{2},\dots x_{n})$, keeping $x_{i}$ private by following a message passing protocol. All users recieve $y$ but do not know each others' $x_{i}$.
+
+(graphs here later)
+
+The problem with a trusted center party is that it can also be faulty or malicious. 
+- *Real World*: Adversary can corrupt a subset of the parties, and interact with honest parties via protocol
+- *Ideal World*: Adversary can corrupt some parties, but only get them to send inputs and receive output from trusted party
+
+We say that a protocol is secure for $f$ if whatever an adversary $A$ controlling $t$ faulty players in the real world learns, can be learned in the ideal world by an adversary that can control the inputs of $t$ players.
+
+ **Universal Theorem**: There exists a secure protocol for $n$ parties to compute any polynomial time function $f$. Under some conditions about no more than $t$-out-of-$n$ people colluding.
+
+Have to consider computational overhead, servers, etc.
+
+### Sharing A Secret
+
+Let $(x_{1},x_{2},x_{3})$ denote values, $(8,10,12)$. 
+
+```mermaid
+graph LR;
+x1 <---> x2; 
+x1 <---> x3;
+x3 <---> x2;
+```
+
+1. Each player chooses at random 3 numbers whose sum is their value
+2. Each player sends green to party 1, purple to party 2, red to party 3
+3. Each recipient sums all the shares recieved
+4. Player $i$ sends $y_{i}$ to all the others.
+5. Sum of values = $y_{1}+y_{2}+y_{3}$
+
+$$\begin{matrix}
+& x_{1} =8=5+2+1 \\
+& x_{2}= 10+3+4+3 \\
+& x_{3}=12=6+5+1\\
+& y_{1}=14=5+3+6 \\
+& y_{2}=11=2+4+5 \\
+& y_{3}=5=1+3+1 \\
+& y_{1}+y_{2}+y_{3}=30
+\end{matrix}$$
+
+#### Generating Random Secret Shares
+
+(For 3 shares and secret $s$)
+1. Pick a number $n$ that is larger than any possible secret
+2. Pick $n_{1},n_{2}$ uniformly at random
+3. Define $n_{3}=s-n_{1}-n_{2} \space (mod \space n)$
+
+Note: When you sum up shares need to use modular addition.
+
+### Group Activity
+
+n=30
+s=20
+n1=5
+n2=10
+n3=2
+n4=3
+
+n4=20-5-10-2=3
+
+Thomas = party 1
+values: 3, 6, 10
+3+6+10+3=22
+
+We used our ages as the secret, and n=30. We didn't really need to use modulo n because we didn't have negative numbers, and we had simple integers. 
+
+### Secret Sharing Contd
+
+Theorem: Users cannot deduce more information about another users' values than computable from the average and his/her own value.
+
+Theorem: Can scale up to $(n-1)$ colluding players out of $n$.
+
+#### t-out-of-n 
+
+Let S be a random secret, want to give $S_{1},S_{2},...,S_{n}$ to n players such that:
+a) Given t of the $S_{i}$'s can find out $S$
+b) Given $t-1$ $S_{i}$'s, any secret $S$ is equally liekly to have produced this set of $S_{i}$'s
+
+
+
+In our example of Boston University and BWWC collaborating, they used two-party MPC. They did this differently than the example from last class, trusting the protocol. They see the share of the secret, but neither party learns about the company data.
+
+**The Structure:**
+1. Secret Share inputs among all participants (BU, BWWC)
+2. Compute on the shares received 
+3. Reconstruct the output
+
+### MPC Addition
+
+a=20 a1=10, a2=10
+b=50 b1=26, b2=24
+(add)
+
+y1=36
+y2=34
+
+y=70 = 20+50 ✅
+### MPC Subtraction
+
+b = 20, b1=9, b2=11
+a = 30, a1=11, a2=19
+
+y1=9-11=-2
+y2=11-19=-8
+
+y=-10 = 20-30 ✅
+
+### MPC Adding a Constant
+
+
+
+### Scalar Multiplication
+
+
+
+### Multiplication (Expensive)
+
+
+### Limits of MPC
+
+You can only do so many operations, but you can approximate things like $\log$ if you use multiplication and polynomials.
+
+### Types of Adversaries
+
+As with before, we have *Eve* and *Mallory*, who are honest but curious and malicious respectively. 
+
+If all three severs in MPC follow the protocol, no server learns any data. $P_{1}$ and $P_{2}$ each hold 1 share of each secret, and $P_{3}$ never receives any info.
+
+The protocol is unsafe if there is one Mallory. If Mallory $= P_{1}$, she can tamper with the output and calculate a bad share, $y_{1}'=y_{1}+1$ causes a corresponding change to $y'=y+1$. It's even worse when protocols that are Eve-resistant permit Mallory activity.
+
+#### Extra Protection
+
+**Universal Theorem**: There exists a secure protocol for $n$ parties to compute any polynomial time function $f$. Under some conditions about no more than t-out-of-n people colluding
+
+- Assuming 2/3 honest majority and secure encryption 
+- Assuming 1/2 honest majority and secure encryption and a broadcast channel: can post a message that all can seen. 
+
+Not assuming any honest majority and heavier crypto machinery that we won’t cover in this class To protect against Mallory, you need to add extra servers for redundancy who will check each other’s work
+
+### Deployment of MPC in Practice
+
+- Cybernetica
+- Google
+- BU
+- Partsia
+- Unbound
+- 
+
+
+
+
+### Introduction to Federated Learning
+
+- Federated Learning (FL) is a machine learning approach where computation is performed on distributed user data without centralizing the data
+- Users keep their data on their own devices, preserving privacy
+- Instead of sharing raw data, only model updates are shared
+
+### Key Features of Federated Learning
+
+- Global computation performed on distributed user data
+- Data remains on user devices ("on device" computation)
+- Central server coordinates but doesn't receive raw data
+- Model updates travel between devices and server instead of raw data
+
+### Central Model, Federated Updates Process
+
+1. Server has initial model
+2. Initial model is pushed to user devices
+3. Users compute model updates based on their local data
+4. Server aggregates these updates into an improved model
+
+```mermaid
+flowchart TD
+1(("x1: f(M,x1)")) --> M(Model M)
+2(("x2: f(M,x2)")) --> M(Model M)
+3(("x3: f(M,x3)")) --> M(Model M)
+```
+
+### Typical Steps in FL Update Round
+
+1. **Model initialization**: Server prepares initial ML model
+2. **Client selection**: Server samples eligible devices (e.g., connected to Wi-Fi)
+3. **Broadcast**: Selected clients download current model and training plan
+4. **Client computation**: Each device computes local model update
+5. **Aggregation**: Server collects and aggregates device updates
+	1. Crypto-related work on this
+6. **Model update**: Server updates the shared model based on aggregated updates
+
+### Scale of FL (Google 2019 Example)
+
+- Total population size: $10^6$ - $10^7$ devices
+- Devices in one training round: 50 - 5,000
+- Number of rounds for convergence: 500 - 10,000
+- Wall clock training time: 1 - 10 days
+Takeaways:
+- Takes a while to converge
+- Takes a long time to train
+### Privacy Guarantees
+
+- Federated Learning has no inherent privacy protection
+- Information can still leak despite the distributed approach
+- FL is a framework that makes adding privacy technologies easier
+- Helpful properties for privacy:
+  - On-device computation
+  - No data storage on server
+  - Minimal information sharing
+  - Limited client sampling
+  - Batch updates instead of individual data
+
+### Privacy Technologies for FL
+
+- Differential Privacy (DP)
+- Secure Multiparty Computation (MPC)
+- Fully Homomorphic Encryption (FHE)
+- Secure servers/Trusted Execution Environments (SGX)
+
+### FL with Secure Server
+
+- **Pro**: No additional noise required
+- **Con**: Requires users to trust the server's security
+	- Result output in the clear
+	- Recent papers show weaknesses
+
+```mermaid
+flowchart TD
+1(("x1: f(M,x1)")) --> M("M'=g(M,x)")
+2(("x2: f(M,x2)")) --> M
+3(("x3: f(M,x3)")) --> M
+```
+
+### FL with MPC 
+
+- **Pro**: Secure without requiring server trust
+- **Con**: High communication overhead
+
+```mermaid
+flowchart LR
+subgraph "MPC"
+	1(("x1")) --> 2
+	1 --> 3
+	2 --> 1
+	2(("x2")) --> 3
+	3 --> 2
+	3(("x3")) --> 1
+	end
+MPC --> M["M'=g(M,x)"]
+```
+
+### FL with Secure Server + Central DP
+
+- **Pro**: Secure server, published results protect user data
+- **Con**: Requires server trust, adds some noise
+
+```mermaid
+flowchart TD
+1(("x1: f(M,x1)")) --> M("M'=g(M,x+noise)")
+2(("x2: f(M,x2)")) --> M
+3(("x3: f(M,x3)")) --> M
+```
+
+### FL with MPC + Central DP
+
+- **Pro**: Secure without server trust, published results protect user data
+- **Con**: High communication overhead, some noise added, challenges with discrete (MPC) vs. continuous (DP) computation
+	- Limited computation
+
+```mermaid
+flowchart LR
+subgraph "MPC"
+	1(("x1")) --> 2
+	1 --> 3
+	2 --> 1
+	2(("x2")) --> 3
+	3 --> 2
+	3(("x3")) --> 1
+	end
+MPC --> M["M'=g(M,x)+noise"] --> Source
+```
+
+### FL with Local DP
+
+- **Pro**: Users add their own privacy, no server trust needed
+- **Con**: Significantly more noise ($O(\sqrt{ n }$ additional error compared to centralized DP)
+
+```mermaid
+flowchart TD
+1(("x1: f(M,x1+noise)")) --> M("M'=g(M,x+noise)")
+2(("x2: f(M,x2+noise)")) --> M
+3(("x3: f(M,x3+noise)")) --> M
+```
+
+### Class Activity: FL and MPC
+
+- Secure aggregation is the core of FL-MPC integration
+	- Secretly sums
+- Can be used to hide weights from being leaked -> Diffie-Hellman Key
+	- Used inside institutions
+	- [JP Morgan paper](https://www.jpmorgan.com/content/dam/jpm/cib/complex/content/technology/ai-research-publications/pdf-9.pdf)
+- Can also do FL-MPC-DP all at once
+- Might have scalability issues
+- Asynchronous aggregation and backup shares can be a solution, but increase complexity
+
+### Ideal Private FL Solution
+
+- Combining Local DP + MPC (or other crypto tools) to get:
+	- Accuracy of centralized DP
+	- Trust model of LDP/MPC
+	- Communication efficiency of LDP
+- Key approach: Offload "expensive" computations to users under LDP, use MPC only for "easy" computations
+
+### Practical Challenges in FL
+
+- Too many users to collect all data simultaneously
+- Need to sample subset of users (mini-batch)
+- Sampling introduces error
+- Works best with iterative algorithms (e.g., SGD)
+- Late-arriving updates
+- Users dropping out during multi-round protocols
+
+

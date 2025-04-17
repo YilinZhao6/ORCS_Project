@@ -1,0 +1,1138 @@
+[1] Similarity: 0.3288 (32.88%)
+--------------------------------------------------------------------------------
+information about another users’
+values than computable from the
+average and his/her own value.
+Theorem: [M. Rabin] Can scale up to
+(n-1) colluding players out of n.
+t-out-of-n secret sharing scheme
+• Let S be a random “secret”
+• Want to give shares S1, S2, …, Sn to the n players such that:
+a) Given t of the Si’s, can find out S.
+b) Given t-1 Si
+’s, any secret S is equally likely to have produced this set of
+Si’s
+To see how to do this, we need to talk a lot about polynomials (maybe
+beyond scope of this class). Slides are included in the deck but hidden – take
+a look if you’re interested! It’s extremely cool!
+An illustrative example…
+Goal 3: Evaluating Success
+Employers agree to … contribute data to
+a report compiled by a third party on the
+Compact’s success to date. Employer-
+level data would not be identified in the
+report.
+Workflow
+Trust spectrum
+Trust us Trust no one
+Trust anyone
+Give someone
+all your data
+Secure MPC
+FHE
+How it works
+$9
+$7
+How it works
+$9
+$7
+=
+=
+10
+4
++
++
+11
+3
+How it works
+11
+10
+– –
+4 3
+8
+6
+How it works
+$9
+–
+$7
+$2
+11
+–
+8
+6
+3
+
+### Identifiers
+
+Direct and indirect ways to identify people:
+
+
+| Direct             | Indirect                 |
+| ------------------ | ------------------------ |
+| Full Name          | First Initial, Last Name |
+| DOB                | Gender                   |
+| Street Address     | Zip Code                 |
+| Email Address      | Birth Year               |
+| Biometric          | Height, Weight           |
+| Driver's License   | Geographic Indicators    |
+| SSN                | Demographics             |
+| Credit Card Number | Health Records           |
+| Passport           | Marriage Status          |
+| Birth Certificate  |                          |
+
+PII refers to any data that can be used to identify a specific individual. It is generally categorized into **direct identifiers** (which can explicitly identify a person) and **indirect identifiers** (which, when combined with other data, could be used to identify a person).
+### **Why Does This Distinction Matter?**
+- **Direct Identifiers** alone can be used to uniquely identify an individual.
+- **Indirect Identifiers** might not uniquely identify someone but can do so when combined with other data points.
+- Organizations handling PII must follow data privacy laws (e.g., **GDPR, CCPA, HIPAA**) to prevent misuse and unauthorized access.
+
+Understanding the difference between direct and indirect PII helps organizations and individuals better manage and protect sensitive information.
+
+### Anonymity
+
+Linkage attack: join anonymized data with other sets to get identifiers on people
+
+Problem: 87% of people could be uniquely identified by 3 indirect identifiers
+
+### [[k-anonymity]]
+
+Make sure people have the same data as you, remaining identifiers aren't directly indentifying
+
+A database is **k-anonymous** if every quasi-identifier equivalence class has $\geq k$ entries.
+
+### $\mathscr{l}$-diversity ([[l-diversity]])
+
+For every group of people sharing identifier, make sure they have different private attributes.
+
+A database is **$\mathscr{l}$-diverse** for every quasi-identifier equivalence class each sensitive attribute is $\geq \frac{1}{\mathscr{l}}$ of its entries.
+
+Different interpretations: 
+- How much weight does one sensitive attribute in the equivalence class?
+- No equivalence class has a health problem that is shared by more than $\frac{1}{\mathscr{l}}$ people.
+- $\frac{1}{\mathscr{l}}$ people in the same equivalence class have the same health problem.
+
+### Example
+
+| Ethnicity   | Zip Code | Condition |
+| ----------- | -------- | --------- |
+| Caucasian   | 787XX    | Flu       |
+| Caucasian   | 787XX    | Shingles  |
+| Caucasian   | 787XX    | Acne      |
+| Caucasian   | 787XX    | Flu       |
+| Caucasian   | 787XX    | Acne      |
+| Caucasian   | 787XX    | Flu       |
+| Asian/AfrAm | 78XXX    | Flu       |
+| Asian/AfrAm | 78XXX    | Flu       |
+| Asian/AfrAm | 78XXX    | Acne      |
+| Asian/AfrAm | 78XXX    | Shingles  |
+| Asian/AfrAm | 78XXX    | Acne      |
+--------------------------------------------------------------------------------
+
+[2] Similarity: 0.3141 (31.41%)
+--------------------------------------------------------------------------------
+From last time: Compliance isn’t enough
+Examples from the discussion board
+• Monitoring employees in the workplace (e.g., Amazon, Walmart)
+• Training AI models on user data – (users agreed in terms of service, or
+changed terms of service without notifying)
+• Google’s gap between what users expected and what they agreed to
+(overly complex design exploited ambiguities and misunderstandings)
+• Ring sharing doorbell footage w/police w/o user consent
+• Medical marketing companies: can’t target to diabetes patients, but
+can target patients using lifestyle psychographics that correlate
+strongly with diabetes.
+• Study of mobile health apps found GDPR compliant apps still had data
+vulnerabilities because GDPR was overly broad without detailed
+guidance.
+Let’s start with compliance and see what
+goes wrong…
+Legal definition of PII (from U.S. Dept of Labor)
+• Any representation of information that permits the identity of an
+individual to whom the information applies to be reasonably inferred
+by either direct or indirect means.
+• Further, PII is defined as information: (i) that directly identifies an
+individual (e.g., name, address, social security number or other
+identifying number or code, telephone number, email address, etc.)
+or (ii) by which an agency intends to identify specific individuals in
+conjunction with other data elements, i.e., indirect identification.
+(These data elements may include a combination of gender, race,
+birth date, geographic indicator, and other descriptors).
+Legal definition of PII (from U.S. DHS)
+• Any information that permits the identity of an individual to be
+directly or indirectly inferred, including any information that is linked
+or linkable to that individual, regardless of whether the individual is a
+U.S. citizen, lawful permanent resident, visitor to the U.S., or
+employee or contractor to the Department.
+• PII includes but is not limited to includes Social Security Numbers,
+driver’s license numbers, Alien Registration numbers, financial or
+medical records, biometrics, or a criminal history.
+Legal definition of PII (from GDPR, Article 4)
+• ‘Personal data’ means any information relating to an identified or
+identifiable natural person (‘data subject’); an identifiable natural
+person is one who can be identified, directly or indirectly, in
+particular by reference to an identifier such as a name, an
+identification number, location data, an online identifier or to one or
+more factors specific to the physical, physiological, genetic, mental,
+economic, cultural or social identity of that natural person.
+Lots more definitions, all follow the same structure:
+• PII permits the identity of an individual to be inferred through direct
+or indirect means.
+• Long list of things that are definitely PII or may be PII
+Direct means + definitely PII
+full name
+date of birth
+street address
+email address
+biometric data
+Driver’s License
+SSN
+credit card number
+IP address
+…
+Indirect means + maybe PII
+first initial and last name
+gender
+zip code
+birth year
+height and weight
+geographic indicators
+demographics
+Why??
+Partial name
+Think like an adversary
+• In 1997, the Massachusetts Group Insurance Commission released
+“anonymized” medical data on hospital visits of all state employees
+Find a partner nearby, introduce yourselves, and discuss (5 min):
+What could you do with these data? (both good and bad)
+Think like an adversary
+• In 1997, the Massachusetts Group Insurance Commission released
+“anonymized” medical data on hospital visits of all state employees
+• Linkage attack: join anonymized hospital discharge data released by
+Massachusetts GIC with public voter list
+14
+What is anonymity?
+• Problem: 87% of people in the US are uniquely identified by the 3
+quasi-identifiers DOB, gender, zip [Sweeney ‘00]
+• How to determine which combination of quasi-identifiers constitute
+PII?
+• Idea: remove/modify/suppress some of the identifiers, while keeping
+the sensitive data
+Problem: Assumes we can partition data
+into “identifying” and “non-identifying”
+Idea 1: k-anonymity
+• Make sure enough people have “the same” data as you, that the
+remaining identifiers are not collectively identifying
+• A database is k-anonymous if every quasi-identifier equivalence class
+has ≥k entries [Sweeney ‘02]
+• “Equivalence class” is the collection of people who have the same collection
+of remaining identifiers as you
+• You are information theoretically indistinguishable from k-1 other people
+• Achieved by suppressing/removing some of the data
+A 2-anonymous database
+Any problems with this?
+Idea 2: ℓ-diversity
+• For
+--------------------------------------------------------------------------------
+
+[3] Similarity: 0.3121 (31.21%)
+--------------------------------------------------------------------------------
+model, federated updates
+• Running example: predicting emoji usage from text
+• Data: lots of people’s text data and emoji usage
+• Model: given text x suggest emoji y
+• Steps:
+• Server has initial model
+• Push initial model to devices
+• Users give model updates based on their data
+• Server aggregates updates into a better model
+Federated Learning
+Analyst wants to compute on data held in a distributed way by its users
+x1
+f(M,x1)
+model M model M model M
+x2
+f(M,x2)
+x3
+f(M,x3)
+Federated Learning
+Analyst wants to compute on data held in a distributed way by its users
+x1
+f(M,x1)
+model M’
+x2
+f(M,x2)
+x3
+f(M,x3)
+Typical steps in FL update round
+1. 2. 3. 4. 5. 6. Model initialization: Server has a hypothesized ML model
+Client selection: Server samples a set of clients who meet eligibility
+requirements (e.g., smartphone, plugged in, connected to wifi).
+Broadcast: Selected clients download current model and training plan
+(e.g., model weights and TensorFlow graph).
+Client computation: Each selected device locally computes an update to
+the model (e.g., running SGD on their data, compute gradient update).
+Aggregation: Server collects an aggregation of the device updates
+Model update: Server updates the shared model based on the
+aggregated update.
+Scale of FL (at Google in 2019)
+• Total population size: 106
+- 107
+• Devices in one round of training: 50 - 5,000
+• Number of rounds for convergence: 500 - 10,000
+• Wall clock training time: 1 - 10 days
+Privacy guarantees?
+• No inherent protection! Information can still leak!
+• Many properties that makes it easier to add privacy technologies:
+• Computation is performed on-device
+• Data never stored on server
+• No “unnecessary” information shared
+• Each client sampled “not too many” times
+• Updates done in batches, so not individual-level data
+Federated learning is a framework.
+Not inherently privacy preserving but very easy
+to add privacy tools.
+What’s the right technology to use?
+• Differential privacy
+• Secure Multiparty Computation
+• FHE (encryption where you can compute without decrypting)
+• SGX servers (also called secure servers / trusted execution
+environments. Loose idea: only the server can decrypt itself, so no
+one else can read contents)
+Federated Learning with secure server
+Pro: server is secure, no additional noise required
+Con: requires users to trust that server really is secure, result
+output in the clear
+x1
+x2
+f(M,x1)
+f(M,x2)
+f(M,x3)
+M’=g(M,x)
+x3
+Federated Learning with MPC
+Pro: MPC is secure, doesn’t require users to trust a server
+Con: high communication overhead under MPC
+x1
+x2
+M’=g(M,x)
+x3
+Federated Learning with secure server + central DP
+Pro: server is secure, user data cannot be inferred from the
+published results
+Con: requires users to trust that server is secure, some
+additional noise added
+f(M,x1)
+x1
+f(M,x2)
+x2
+M’=
+g(M,x)+noise
+f(M,x3)
+x3
+Federated Learning with MPC + central DP
+Pro: MPC is secure, doesn’t require users to trust a server, user
+data cannot be inferred from the published results
+Con: DP algorithms may involve complicated functions that
+require high communication overhead under MPC, some
+additional noise added, DP is continuous and MPC is discrete
+x1
+x2
+M’=g(M,x)+noise
+x3
+Federated Learning with local DP
+Pro: Users add their own privacy, doesn’t require users to trust a
+server, user data cannot be inferred from the submitted data or
+published results
+Con: LOTS of additional noise added (O 𝑛 additional error
+relative to centralized DP for 𝑛 users)
+x1
+f(M,x1 + noise)
+x2
+f(M,x2 + noise)
+M’=
+g(M,x+noise)
+x3
+f(M,x3 + noise)
+In class activity (~20 min)
+• (~15 min) In a group of 3-4, pick one of the methods for doing FL
+• Delve deeper into the technical integration of these tools for this task. How
+does FL change the requirements of integrating them?
+• Think deeper about pros and cons. Any technical or social challenges? What
+would work and what would
+--------------------------------------------------------------------------------
+
+[4] Similarity: 0.3005 (30.05%)
+--------------------------------------------------------------------------------
+shares the same statistical
+properties with the original database
+Synthetic data
+• Synthetic data is a new dataset created as a function of the original
+data
+• When you ask queries of the synthetic data, it should give you
+“similar” answers to the answer on the true dataset
+Example:
+0
+1
+0
+1
+0
+0
+1
+f(X) = fraction of 1s in dataset X
+f( ) = 4/7 ≈ 0.57
+f( ) = 0.50
+0
+1
+1
+1
+5
+Why synthetic data?
+• Practitioners are used to working with data!
+• Current workflow can be unchanged
+• May not trust specialized privacy tools (e.g., DP mechanisms)
+• Allows many types of analyses
+• Unlimited number of computations on dataset (i.e., no privacy
+budget)
+• No interaction required between analyst and privacy expert
+• Sometimes required by law (e.g., Census Bureau)
+6
+Challenges with synthetic data
+• How to measure accuracy of synthetic data?
+• Unlike a single query, notion of “accuracy” is high-dimensional and non-obvious
+• Practitioners need to understand that synthetic data is not ground truth
+• No one-to-one mapping between individuals in the original data and synthetic data
+• Many of the “sanity-checks” in data cleaning can’t be done b/c properties hold only
+in aggregate, not for the individual entries
+• May only be accurate on some queries
+• Accuracy guarantees are approximate (like in earlier example)
+• Is it private?
+• How to generate synthetic data?
+7
+Is it private?
+• Not automatically!
+• E.g., k-anonymizing the dataset would result in a “new” dataset where all the
+same queries can be answered
+• It can help reduce obvious/easy privacy breaches, but does not de
+facto ensure privacy
+• The algorithm used to generate synthetic data (as a function of the real data)
+may leak information
+• The synthetic dataset itself may leak information
+• Can be paired with other privacy technologies
+• E.g., differentially private algorithms for generating synthetic data
+8
+Using Exponential Mech for synth data
+Takes very long time
+• SmallDB algorithm [BLR ‘08] takes in database 𝑥 of size 𝑛 and set of queries 𝐹
+• Outputs smaller database 𝑦 that can be used to (approximately) correctly
+answer all the queries in 𝐹
+• Uses Exponential Mechanism to sample a database
+SmallDB(𝑥, 𝐹, 𝜖)
+1. Enumerate all databases of desired size
+2. Assign quality score 𝑞 𝑥, 𝑧, 𝐹 = −max
+𝑓∈𝐹 |𝑓 𝑥 − 𝑓 𝑧 | to each small
+database 𝑧
+3. Output 𝑦 sampled w.p. ∝ exp
+𝜖 𝑞 𝑦,𝐹,𝑥
+2Δ𝑞
+Pros: differentially private, formal accuracy guarantees
+Cons: takes exponential time, accuracy only for pre-specified query class
+9
+quality score is error on worst query
+Private GANs
+• Generative Adversarial Networks (GANs) are two competing neural
+networks: Generator and Discriminator
+• Generator generates synthetic data
+• Discriminator is given data and decides whether it is from Generator or
+is real data
+10
+Private GANs
+• Generator and Discriminator are typically trained via deep learning
+techniques like stochastic gradient descent (SGD)
+• Publish Generator after training, which can be used to generate arbitrary
+amounts of new synthetic data
+• Can be used as-is without other privacy tools but risks memorizing things
+about the dataset, and leaking data
+• E.g., GPT-4 produced a full page of Harry Potter
+• Can also substitute DP versions of training algorithms (e.g., DP-SGD instead
+of regular SGD) and will immediately be DP by post-processing
+Pros: queries don’t need to be pre-specified, easy to share trained model, can
+generate arbitrary amounts of data
+Cons: no formal accuracy guarantees, slow to train, black box
+11
+Application to medical data [BWWLBBG ‘19]
+• Applied Differentially Private GANs to
+medical context
+• Trained on Systolic Blood Pressure
+Intervention Trial dataset
+• Generated synthetic blood pressure data
+• Showed minimal accuracy loss from
+privacy
+• Published in medical journal
+12
+In-class activity
+In groups of 2-3:
+• Discuss benefits of using synthetic data as a privacy method and one
+challenge for using it in practice
+• Quiz
+--------------------------------------------------------------------------------
+
+[5] Similarity: 0.2748 (27.48%)
+--------------------------------------------------------------------------------
+Homomorphic Encryption (FHE)
+- Secure servers/Trusted Execution Environments (SGX)
+
+### FL with Secure Server
+
+- **Pro**: No additional noise required
+- **Con**: Requires users to trust the server's security
+	- Result output in the clear
+	- Recent papers show weaknesses
+
+```mermaid
+flowchart TD
+1(("x1: f(M,x1)")) --> M("M'=g(M,x)")
+2(("x2: f(M,x2)")) --> M
+3(("x3: f(M,x3)")) --> M
+```
+
+### FL with MPC 
+
+- **Pro**: Secure without requiring server trust
+- **Con**: High communication overhead
+
+```mermaid
+flowchart LR
+subgraph "MPC"
+	1(("x1")) --> 2
+	1 --> 3
+	2 --> 1
+	2(("x2")) --> 3
+	3 --> 2
+	3(("x3")) --> 1
+	end
+MPC --> M["M'=g(M,x)"]
+```
+
+### FL with Secure Server + Central DP
+
+- **Pro**: Secure server, published results protect user data
+- **Con**: Requires server trust, adds some noise
+
+```mermaid
+flowchart TD
+1(("x1: f(M,x1)")) --> M("M'=g(M,x+noise)")
+2(("x2: f(M,x2)")) --> M
+3(("x3: f(M,x3)")) --> M
+```
+
+### FL with MPC + Central DP
+
+- **Pro**: Secure without server trust, published results protect user data
+- **Con**: High communication overhead, some noise added, challenges with discrete (MPC) vs. continuous (DP) computation
+	- Limited computation
+
+```mermaid
+flowchart LR
+subgraph "MPC"
+	1(("x1")) --> 2
+	1 --> 3
+	2 --> 1
+	2(("x2")) --> 3
+	3 --> 2
+	3(("x3")) --> 1
+	end
+MPC --> M["M'=g(M,x)+noise"] --> Source
+```
+
+### FL with Local DP
+
+- **Pro**: Users add their own privacy, no server trust needed
+- **Con**: Significantly more noise ($O(\sqrt{ n }$ additional error compared to centralized DP)
+
+```mermaid
+flowchart TD
+1(("x1: f(M,x1+noise)")) --> M("M'=g(M,x+noise)")
+2(("x2: f(M,x2+noise)")) --> M
+3(("x3: f(M,x3+noise)")) --> M
+```
+
+### Class Activity: FL and MPC
+
+- Secure aggregation is the core of FL-MPC integration
+	- Secretly sums
+- Can be used to hide weights from being leaked -> Diffie-Hellman Key
+	- Used inside institutions
+	- [JP Morgan paper](https://www.jpmorgan.com/content/dam/jpm/cib/complex/content/technology/ai-research-publications/pdf-9.pdf)
+- Can also do FL-MPC-DP all at once
+- Might have scalability issues
+- Asynchronous aggregation and backup shares can be a solution, but increase complexity
+
+### Ideal Private FL Solution
+
+- Combining Local DP + MPC (or other crypto tools) to get:
+	- Accuracy of centralized DP
+	- Trust model of LDP/MPC
+	- Communication efficiency of LDP
+- Key approach: Offload "expensive" computations to users under LDP, use MPC only for "easy" computations
+
+### Practical Challenges in FL
+
+- Too many users to collect all data simultaneously
+- Need to sample subset of users (mini-batch)
+- Sampling introduces error
+- Works best with iterative algorithms (e.g., SGD)
+- Late-arriving updates
+- Users dropping out during multi-round protocols
+--------------------------------------------------------------------------------
+
+[6] Similarity: 0.2746 (27.46%)
+--------------------------------------------------------------------------------
+the output of the
+𝑀𝐸 𝑥, 𝑞, 𝜖 . Then, for all 𝛽 ∈ (0,1],
+2Δ𝑞 ∗ ln Τ
+|ℛ| 𝛽
+Pr 𝑞 𝑥, 𝑟 − max
+𝑟′∈ℛ 𝑞 𝑥, 𝑟′ ≥
+𝜖
+• Smaller 𝜖 gives better privacy and worse accuracy
+≤ 𝛽
+Today’s homework
+On Courseworks:
+1. 2. 3. 4. Reading from the DP textbook
+https://www.cis.upenn.edu/~aaroth/Papers/privacybook.pdf
+• Section 3.3 up to bottom of page 34
+• Section 3.4 up to bottom of page 40
+• Feel free to skip proofs
+Technical assignment with examples implementing the Laplace
+Mechanism
+Technical assignment with example implementing the Exponential
+Mechanism
+(Optional but encouraged) Watch videos with proofs of privacy for
+Laplace and Exponential Mechanisms
+Questions?
+Differential privacy:
+Local/central models, DP in practice, and picking 𝜖
+Agenda:
+1. Local vs. Central
+models
+2. Examples of DP use in
+practice
+3. How to pick epsilon?
+
+Feb. 19, 2025
+So far… Finally…
+Laplace Mechanism [DMNS ‘06]
+“Have you ever cheated on an exam?”
+1. Each person tells me their true answer
+2. I compute μ(D)
+1/𝜖3. I sample noise from Lap( )
+4. Announce μ(D) + noise
+Randomized response [W ‘65]
+“Have you ever cheated on an exam?”
+1. 2. Each person flips 2 coins
+If the first is TAILS:
+Announce true answer
+3. Else (first is HEADS):
+If second is TAILS:
+Announce YES
+Else:
+Announce NO
+Who adds noise?
+Central model
+• Requires trusted party
+collects and sees data
+• Add less noise
+(i.e., more accurate)
+• e.g., Laplace Mechanism
+μ(D)
+Local model
+• Add noise locally (i.e.,
+doesn’t require trust)
+• More error because can’t
+coordinate noise
+• e.g., Randomized
+Response
+Central model
+𝑀: 𝒳𝑛 → 𝑅 (𝝐, 𝜹) ∀
+An algorithm is -differentially private if
+𝐷, 𝐷′ ∈ 𝒳𝑛 ∀ 𝑆 ⊆ 𝑅
+neighboring databases and ,
+Pr[𝑀(𝐷) ∈ 𝑆] ≤ 𝑒𝜖 𝑃 𝑟[𝑀(𝐷′ ) ∈ 𝑆] + 𝛿
+Image credit: KLNRS ‘08
+6
+Local model
+An algorithm 𝑀: 𝒳 → 𝑅 𝝐 ∀
+is an –local randomizer if inputs
+𝑥, 𝑥′ ∈ 𝒳 ∀ 𝑆 ⊆ 𝑅
+and ,
+Pr[𝑀(𝑥) ∈ 𝑆] ≤ 𝑒𝜖Pr[𝑀(𝑥′ ) ∈ 𝑆]
+Differential privacy for a database of size n=1 Even though the
+definition is the same,
+practical meaning of
+𝝐
+is not the same in
+both models!
+Image credit: KLNRS ‘08
+7
+Local model use in practice
+• Google uses local DP for Chrome crash reports
+• Google wants to know which websites/plugins/settings/etc crash chrome
+the most often, so they can squash those bugs
+• When Chrome crashes, your device sends back a report
+• Use a fancy version of RR (RAPPOR)
+• Goal is only to find most common
+site that crashed, nothing else
+• https://arxiv.org/abs/1407.6981
+Local model use in practice
+• Apple uses local DP for emoji prediction
+• Apple wants to know which emojis are most likely to be used after
+which words, to better predict/suggest them
+• Train a model based on frequency of words/emojis
+• Obviously don’t want to send data back to server
+about everything you type!
+• Use local DP to train “on device”
+• https://machinelearning.apple.com/research/
+learning-with-privacy-at-scale
+Summary of models
+Local model:
+• Use case: Highly sensitive data
+on-device
+• Doesn’t require trusted analyst
+10
+Central model use in practice
+--------------------------------------------------------------------------------
+
+[7] Similarity: 0.2648 (26.48%)
+--------------------------------------------------------------------------------
+a – a) * (x + b – b)
+= w * x
+Computing servers
+P1
+= =
+w1
+x1
+a1 b1 c1
++ +
+w2
+x2
+a2 b2 c2
+P2
+Split secrets … and
+random a, b, c with a * b = c
+[d] = [w] – [a]
+[e] = [x] – [b]
+reconstruct d, e
+[y] = de + d[b] + e[a] + [c]
+Compute over secret shares
+and reconstruct answers
+In-class activity (~15 min)
+• In pairs or groups, practice performing 2-server MPC computations
+• addition, subtraction, adding a constant, scalar multiplication
+• multiplication if you want a challenge!
+• If pairs: each person is a server
+• If groups:
+• pairs can each play a server so you have a buddy in your secret sharing
+• or you can try to see how each operations work with 3 servers
+At the end: Courseworks quiz about your experience
+Types of adversaries
+Honest but curious (Eve/Eavesdropper): Follows the protocol and tries
+to learn along the way
+Malicious (Mallory): May deviate from the protocol
+So far we have only been considering Eve…
+Security against Eve/Mallory
+• Claim: if all three servers follow the protocol, no server learns any
+data
+• P1 and P2 each hold 1 share of each secret, appears perfectly random
+• P3 never receives any information in the entire protocol
+• “Three servers can keep a secret if all of them don’t know what it is.”
+–Prof. Andrew Miller, UIUC
+• However, protocol is unsafe if one server is an active Mallory
+• Bad: If Mallory = P1, she can tamper with the output. Calculating a bad share
+y1’ = y1 + 1 causes a corresponding change to the hidden value y’ = y + 1
+• Worse: Some protocols that are only secure against Eve might permit Mallory
+to learn secrets as well
+Secure Multi-Party Computation
+Data2
+Yao82
+Goldreich-Micali-
+Wigderson 86
+Benor-Goldwasser-
+Wigderson 87
+Data1
+Data3
+Data5
+Data4
+Universal Theorem: There exists a secure protocol for n
+parties to compute any polynomial time function f
+Under some conditions about no more than t-out-of-n
+people colluding.
+Conditions (even against Mallory!)
+Assuming 2/3 honest majority and secure encryption
+Assuming 1/2 honest majority and secure encryption and a broadcast
+channel: can post a message that all can seen.
+Not assuming any honest majority and heavier crypto machinery that
+we won’t cover in this class
+To protect against Mallory, you need to add extra servers for
+redundancy who will check each other’s work
+Some deployments of MPC in practice
+Cybernetica: VAT tax audits BU: Pay equity in Boston
+Partisia: Rate credit of farmers
+Google: Federated machine learning
+Unbound: Protect cryptographic keys
+Today’s Homework
+• Reminder Final Project proposal due tonight at 11:59pm
+• Homework 3 Part 1 will be posted tonight/tomorrow
+• It’s about MPC and BWWC!
+• Due Tuesday 4/1 at 11:59pm
+Questions?
+Federated Learning:
+
+Apr. 7, 2025
+Agenda:
+1. Introduction federated
+learning
+2. Privacy guarantees
+3. Integrating FL with DP
+and crypto
+Administrative updates
+• Final project reminder
+• Final exam planning
+• Any other other questions/discussion?
+Idealized Learning
+Analyst wants to compute on data held in a distributed way by its users
+x1
+f(x)
+x2
+x3
+Users don’t want to send data directly! How can
+we do the same task without sharing data?
+Key features of Federated Learning
+• Global computation performed on lots of users’ data
+• Each user holds their own data
+• Computation happens “on device” rather than sending data to central
+server
+• How is this possible? Model updates!
+Central model, federated updates
+• Running example: predicting emoji usage from text
+• Data: lots of people’s text data and emoji usage
+• Model: given text x suggest emoji y
+• Steps:
+• Server has initial model
+• Push initial model to devices
+• Users give model updates based on their data
+• Server aggregates updates into a better model
+Federated Learning
+Analyst wants to compute on data held in a distributed way by its users
+x1
+f(M
+--------------------------------------------------------------------------------
+
+[8] Similarity: 0.2613 (26.13%)
+--------------------------------------------------------------------------------
+is defined as:
+
+$$M_{E}(x,q,\epsilon)=\text{output } r\in R \text{ with probability } \propto \frac{\exp(\epsilon \times q(x,r))}{2\Delta q})$$
+
+$\propto$ meaning proportional to, ensuring distribution with total probability 1. We place higher weight on outcomes with higher quality, so we're more likely to pick one with high quality.
+
+Let $r \in R$ be the output of $M_{E}(x,q,\epsilon)$. Then, for all $\beta\in(0,1]$, $$\text{Pr}\left[ q(x,r)-\text{max}_{r'\in R}q(x,r')\geq\frac{2\Delta q\times \ln\left( \frac{|R|}{\beta} \right)}{\epsilon}\right]\leq \beta$$
+
+
+Central model
+- requires trusted party
+- add less noise -> more accurate
+- Laplace Mechanism
+
+Local model
+- Add noise locally, trust not needed
+- More error b/c noise isn't coordinate
+- Randomized Response
+
+### Central Model
+
+An algorithm $M:\mathcal{X}^n\to R$ is an $(\epsilon,\delta)$-differentially private if $\forall$ neighboring databases $D, D' \in\mathcal{X}^n$ and $\forall S\subseteq R$, $$\text{Pr}[M(D)\in S]\leq e^{\epsilon}\text{ Pr}[M(D)\in S]+\delta$$
+
+> [!example] Central Model in Practice
+> LinkedIn uses the system for gathering link info for Top 10 news stories.
+> 
+> Uber used central DP so that employees couldn't access the raw data in response to prior direct Uber employee access to customer data.
+
+Main use case is that the entity already has the data and allows others limited access, so it requires trust in exchange for better accuracy. This allows for more complex operations.
+
+### Local Model
+
+An algorithm $M:\mathcal{X}\to R$ is an $\epsilon$-local randomizer if $\forall$ inputs $x, x' \in\mathcal{X}$ and $\forall S\subseteq R$, $$\text{Pr}[M(x)\in S]\leq e^{\epsilon}\text{ Pr}[M(x)\in S]$$
+
+> [!Example] Local Model in Practice
+> Google uses DP for Chrome crash reports so they can figure out what websites and settings crash Chrome most so they can fix it.
+> 
+> Apple uses it for emoji and text prediction, so they can train their model w/o privacy infringement.
+
+The main use case for local model is for highly sensitive data on-device, where you don't need a trusted human being to check everything. Even though there's some error tradeoff for local models, companies gather huge datasets and can still reach their goal.
+
+### Discussion
+
+Local:
+- crash reports
+- general telemetry
+- LLM queries
+
+Central:
+- link information
+- top 10 watched shows on netflix
+- crash reports
+
+Not sure:
+- financial fraud reporting?
+
+### Privacy-Accuracy Trade-Off
+
+$$\text{max}_{\epsilon} \lambda_{p} u_{\text{privacy}}(\epsilon)+\lambda_{a}u_{\text{accuracy}}(a) \text{ s.t. } (a,\epsilon) \text{ feasible}$$
+
+Feasibility, e.g., [[Laplace Mechanism]]
+$$\text{Pr}\left[ |\alpha|\leq \ln( \frac{1}{\beta} )\times ( \frac{\Delta f}{\epsilon}) \right]\geq 1-\beta$$
+- Different mechanisms have different guarantees
+- You want to balance privacy and accuracy
+- This is all very complex in practice
+
+1. Pick an algorithm
+2. Analyze accuracy as a function of error
+3. Pick an $\epsilon$ to balance privacy-accuracy trade-off
+4. Done
+
+For multiple queries:
+1. Pick an algorithm
+2. Analyze accuracy as a function of error
+3. Pick an $\epsilon$ to balance privacy-accuracy trade-off
+4. Repeat 1-3 for all relevant queries
+5. Analyze total privacy loss via composition
+
+If privacy loss is too large:
+
+1. Pick a privacy budget
+2. Collect queries
+3. Collect per query privacy $\epsilon'$ via reverse engineering
+4. Run each query with appropriate $\epsilon'$-DP algorithm
+5. Analyze accuracy of each output as a function of $\epsilon'$
+
+
+
+**Need to know to decide if $\epsilon$ is "good"**
+ - $\delta$
+- Impact on accuracy
+- Process of
+--------------------------------------------------------------------------------
+
+[9] Similarity: 0.2563 (25.63%)
+--------------------------------------------------------------------------------
+to: } $$<br>$$\forall q\in Q, \space e'_{q}=a_{q}-q(x')$$<br>$$\forall i\in I, \space 0\leq x_{i}'\leq 1$$ |
+
+
+### Contextual Integrity
+
+- Helen Nissenbaum defined contextual integrity, where her training as a philosopher helped
+- Key Principles:
+	- Privacy is about how information flows.
+	- The definition of privacy should depend on the context.
+- Ex: 
+	- Health info going to your doctor is okay
+	- Health info going to your neighbor/boss/etc is not okay
+- Information flow is appropriate if it respects cultural norms
+
+### Context
+
+- Why does the content exist in society?
+- Who are the actors operating?
+- What types of information flow?
+- What's appropriate information flow?
+- What are the restrictions on the information flow?
+
+### Information Norm
+
+1. Data subject
+2. Sender of the data
+3. Recipient of the data
+4. The information type
+5. Transmission principle
+
+We need all five to evaluate the appropriateness of the flow.
+
+
+> [!example] Healthcare Context
+> - Contextual Purposes: Preserving health of the people, etc
+> - Agent Roles: Doctors, nurses, etc.
+> - Information Attributes: Medical test results, treatment notes, blood type, etc.
+> - Information Norms: A patient's medical record may be sent from their primary care physician to a specialist when the patient requests a referral.
+
+### More Examples
+
+
+| Premise                           | Data Subject         | Data Sender              | Data Recipient       | Information Type                    | Transmission Principle        |
+| --------------------------------- | -------------------- | ------------------------ | -------------------- | ----------------------------------- | ----------------------------- |
+| A background check on an employee | Prospective employee | Background check company | Prospective Employer | Court records, arrest records, etc. | With employee consent/request |
+| Doing taxes                       | Client               | Client                   | Tax preparer         | Financial info                      | Client hires tax preparer     |
+
+
+
+[[Laplace Mechanism]]: used to privately answer numerical functions $f:\mathbb{N}^{|X|}\to \mathbb{R}$. Computes true answer and adds random noise.
+
+Sensitivity of a function $f:\mathbb{N}^{|X|}\to \mathbb{R}$ is $$\Delta = \text{max}_{\text{x,y neighbors}} |f(x)-f(y)|$$
+This captures how much value of the function can change in the worst case by changing one person's data.
+
+If the sensitivity is really big (i.e. salary) then you want to be careful about setting an upper limit.
+
+Let $Y \sim \text{Lap}(b)$ be a random variable with Lapalace distribution with parameter $b$. It's a two-sided exponential around 0.
+
+Partially differentiable function of the distribution with parameter $b$: $$f(y)=\frac{1}{2b}\exp\left( -\frac{|y|}{b} \right)$$
+Smaller $b$ is pointer with lower variance and larger $b$ is flatter with higher variance.
+
+### Laplace Mechanism
+
+Given a function $f:\mathbb{N}^{|X|}\to \mathbb{R}$, the Laplace Mechanism is $$M_{L}(x,f,\epsilon)=f(x)+Y$$
+where $Y \sim \text{Lap}\left( \frac{\Delta f}{\epsilon} \right)$.
+
+Compute the true value of the function f(x) and then add Laplace noise that depends on the functions sensitivity and your desired privacy. Larger sensitivity $\Delta f$ or smaller $\epsilon$ means more noise.
+
+This mechanism is $\epsilon$-differentially private. There's no $\delta$ going on here.
+
+Let $f:\mathbb{N}^{|X|}\to \mathbb{R}$ be any function. For all $\beta \in (0,1]$, $$\text{Pr}\left[ |f(x)-M_{L}(x,f,\epsilon)|\leq \ln( \frac{1}{\beta} )\times ( \frac{\Delta}{\epsilon}) \right]1-\beta$$
+With high probability you get answers close to the true answers, closeness depends on high probability parameter, function sensitivity and privacy parameter. 
+
+Privacy alone is easy, but we want both privacy and accurate answers. Laplace Mechanism is $\epsilon$-DP. Smaller $\epsilon$ gives better privacy and worse accuracy.
+
+#### Examples
+
+If the query is "How many individuals in the database are x?", then **the sensitivity is 1.** Adding or removing one person can
+--------------------------------------------------------------------------------
+
+[10] Similarity: 0.2544 (25.44%)
+--------------------------------------------------------------------------------
+2=19
+
+y1=9-11=-2
+y2=11-19=-8
+
+y=-10 = 20-30 ✅
+
+### MPC Adding a Constant
+
+
+
+### Scalar Multiplication
+
+
+
+### Multiplication (Expensive)
+
+
+### Limits of MPC
+
+You can only do so many operations, but you can approximate things like $\log$ if you use multiplication and polynomials.
+
+### Types of Adversaries
+
+As with before, we have *Eve* and *Mallory*, who are honest but curious and malicious respectively. 
+
+If all three severs in MPC follow the protocol, no server learns any data. $P_{1}$ and $P_{2}$ each hold 1 share of each secret, and $P_{3}$ never receives any info.
+
+The protocol is unsafe if there is one Mallory. If Mallory $= P_{1}$, she can tamper with the output and calculate a bad share, $y_{1}'=y_{1}+1$ causes a corresponding change to $y'=y+1$. It's even worse when protocols that are Eve-resistant permit Mallory activity.
+
+#### Extra Protection
+
+**Universal Theorem**: There exists a secure protocol for $n$ parties to compute any polynomial time function $f$. Under some conditions about no more than t-out-of-n people colluding
+
+- Assuming 2/3 honest majority and secure encryption 
+- Assuming 1/2 honest majority and secure encryption and a broadcast channel: can post a message that all can seen. 
+
+Not assuming any honest majority and heavier crypto machinery that we won’t cover in this class To protect against Mallory, you need to add extra servers for redundancy who will check each other’s work
+
+### Deployment of MPC in Practice
+
+- Cybernetica
+- Google
+- BU
+- Partsia
+- Unbound
+- 
+
+
+
+
+### Introduction to Federated Learning
+
+- Federated Learning (FL) is a machine learning approach where computation is performed on distributed user data without centralizing the data
+- Users keep their data on their own devices, preserving privacy
+- Instead of sharing raw data, only model updates are shared
+
+### Key Features of Federated Learning
+
+- Global computation performed on distributed user data
+- Data remains on user devices ("on device" computation)
+- Central server coordinates but doesn't receive raw data
+- Model updates travel between devices and server instead of raw data
+
+### Central Model, Federated Updates Process
+
+1. Server has initial model
+2. Initial model is pushed to user devices
+3. Users compute model updates based on their local data
+4. Server aggregates these updates into an improved model
+
+```mermaid
+flowchart TD
+1(("x1: f(M,x1)")) --> M(Model M)
+2(("x2: f(M,x2)")) --> M(Model M)
+3(("x3: f(M,x3)")) --> M(Model M)
+```
+
+### Typical Steps in FL Update Round
+
+1. **Model initialization**: Server prepares initial ML model
+2. **Client selection**: Server samples eligible devices (e.g., connected to Wi-Fi)
+3. **Broadcast**: Selected clients download current model and training plan
+4. **Client computation**: Each device computes local model update
+5. **Aggregation**: Server collects and aggregates device updates
+	1. Crypto-related work on this
+6. **Model update**: Server updates the shared model based on aggregated updates
+
+### Scale of FL (Google 2019 Example)
+
+- Total population size: $10^6$ - $10^7$ devices
+- Devices in one training round: 50 - 5,000
+- Number of rounds for convergence: 500 - 10,000
+- Wall clock training time: 1 - 10 days
+Takeaways:
+- Takes a while to converge
+- Takes a long time to train
+### Privacy Guarantees
+
+- Federated Learning has no inherent privacy protection
+- Information can still leak despite the distributed approach
+- FL is a framework that makes adding privacy technologies easier
+- Helpful properties for privacy:
+  - On-device computation
+  - No data storage on server
+  - Minimal information sharing
+  - Limited client sampling
+  - Batch updates instead of individual data
+
+### Privacy Technologies for FL
+
+- Differential Privacy (DP)
+- Secure Multiparty Computation (MPC)
+- Fully Homomorphic Encryption (FHE)
+- Secure servers/Trusted Execution Environments (SGX)
+
+### FL with Secure Server
+
+- **Pro**: No additional noise required
+- **Con**: Requires users to trust the server's security
+	- Result output in the clear
+	- Recent papers show weaknesses
+
+```mermaid
+flowchart TD
+1(("x1: f(M,x1)")) --> M("M'=g(M,x)")
+2(("x2: f(M,x2
+--------------------------------------------------------------------------------
+
