@@ -151,8 +151,3 @@ Saved top 10 chunks to source_files/vector_search_results.txt
 
 ---
 
-## ✨ Final Notes
-
-This system is designed to help **bridge the gap between real-world use-cases and privacy-preserving techniques**. It supports explainability, custom document ingestion, and interaction-driven decision support.
-
-Let us know if you’d like a web-based UI for this flow, or a PDF export of all results!
