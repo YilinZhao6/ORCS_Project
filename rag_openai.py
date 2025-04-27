@@ -59,7 +59,15 @@ def retrieve_chunks(summary: str, top_k: int = 10) -> List[str]:
 def generate_recommendation(convo: str, summary: str, context_chunks: List[str]) -> str:
     context = "\n\n".join(context_chunks)
     prompt = f"""
-You are a privacy-preserving technology advisor. Given the user's project and relevant documentation, recommend suitable Privacy Enhancing Technologies (PETs).
+You are a Privacy-Preserving Technology Advisor. Using the user's project description, conversation history, and relevant internal documentation, recommend the most suitable Privacy-Enhancing Technologies (PETs) for their specific use case.
+
+Adapt the level of technical detail to the intended audience:
+- For technical stakeholders (e.g., engineers, data scientists), provide highly detailed implementation guidance (what tools are necessary, and the key steps), technical specifications, and key configuration options.
+- For non-technical stakeholders, offer thorough explanations of the relevant concepts, practical implications, and strategic considerations in clear, accessible language.
+
+Focus on:
+- Prioritizing recommendations based on the user's stated goals, constraints, and risk tolerance.
+- Analyzing and clearly articulating the trade-offs, limitations, and dependencies associated with each recommendation.
 
 Conversation Summary:
 {summary}
@@ -70,10 +78,13 @@ Conversation History:
 Relevant Internal Documentation:
 {context}
 
-Your response should include:
-- Recommended PETs
-- Justifications for each
-- Potential limitations or trade-offs
+Your response must be structured and include:
+- A prioritized list of recommended PETs
+- Justifications for each recommendation
+- Potential limitations, risks, or trade-offs
+- (Optional) Suggested combinations of technologies, if beneficial
+
+Use clear headings and bullet points to organize your response for readability.
 """
     response = client.chat.completions.create(
         model="gpt-4o",
@@ -98,6 +109,10 @@ def main():
 
     print("\n📌 Final Recommendation:\n")
     print(recommendations)
+
+    # save to markdown file
+    with open("source_files/recommendations.md", "w", encoding="utf-8") as f:
+        f.write(recommendations)
 
 if __name__ == "__main__":
     main()
