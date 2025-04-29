@@ -6,7 +6,7 @@ from openai import OpenAI
 from vector_search import search_vectors
 
 # === Setup ===
-client = OpenAI(api_key="PUT API KEY HERE")  # Use your API key from environment variable
+client = OpenAI(api_key="MY_API_KEY")  # Use your API key from environment variable
 HISTORY_PATH = "source_files/conversation_history.json"
 
 # === Step 1: Define Pydantic schema ===
@@ -79,7 +79,8 @@ Relevant Internal Documentation:
 {context}
 
 Your response must be structured and include:
-- A prioritized list of recommended PETs
+- Please be long and detailed in your response.
+- Pick the best 2 techonologies, and explain in detail why you choose them and how they can be implemented (specific steps) in user's use case.
 - Justifications for each recommendation
 - Potential limitations, risks, or trade-offs
 - (Optional) Suggested combinations of technologies, if beneficial
@@ -87,8 +88,10 @@ Your response must be structured and include:
 Use clear headings and bullet points to organize your response for readability.
 """
     response = client.chat.completions.create(
-        model="gpt-4o",
-        messages=[{"role": "user", "content": prompt}]
+        model="gpt-4.1",
+        messages=[{"role": "user", "content": prompt}],
+        max_tokens=10000
+
     )
     return response.choices[0].message.content.strip()
 
